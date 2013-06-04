@@ -60,11 +60,11 @@ var respecConfig = {
         Introduction
       </h2>
       <p>
-        Some applications require access to APIs which, if abused, may
-        cause significant damage to the end user's services, data or
-        devices. For example, an API allowing the use of SMS could be
-        misused by a malicious application to send unwanted premium-rate
-        messages costing the user money.
+        Some system-level applications require access to APIs which,
+        if abused, may cause significant damage to the end user's services,
+        data or devices. For example, an API allowing access to all installed
+        applications could be misused by a malicious application to launch,
+        install, or uninstall any application without user's consent.
       </p>
       <p>
         Because the impact of using a malicious application with these
@@ -80,7 +80,7 @@ var respecConfig = {
         As a complement to permissioning, this specification defines a
         <em>privileged</em> class of application. Applications which are
         not privileged will not be able to access potentially dangerous
-        APIs.
+        APIs defined in this specification.
       </p>
     </section>
     <section id="conformance">
