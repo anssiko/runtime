@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>
-      Runtime and Security Model for Web Applications
+      Privileged Applications Extensions
     </title>
     <script src="http://www.w3.org/Tools/respec/respec-w3c-common" class=
     "remove">
@@ -11,12 +11,12 @@
     <script class='remove'>
 var respecConfig = {
         specStatus:           "ED",
-        shortName:            "runtime",
+        shortName:            "privileged",
 
         //publishDate:  "2012-12-12",
         previousPublishDate:  "2013-03-21",
         previousMaturity:     "FPWD",
-        edDraftURI:           "http://www.w3.org/2012/sysapps/runtime/",
+        edDraftURI:           "http://www.w3.org/2012/sysapps/privileged/",
         // lcEnd: "3000-01-01",
         // crEnd: "3000-01-01",
 
@@ -41,7 +41,8 @@ var respecConfig = {
         wg:           "System Applications Working Group",
         wgURI:        "http://www.w3.org/2012/sysapps/",
         wgPublicList: "public-sysapps",
-        wgPatentURI:  "http://www.w3.org/2004/01/pp-impl/58119/status"
+        wgPatentURI:  "http://www.w3.org/2004/01/pp-impl/58119/status",
+        subtitle:     "A Runtime and Security Model Extension for Privileged Applications" 
       };
     </script>
     <style>
@@ -50,6 +51,9 @@ var respecConfig = {
   </head>
   <body>
     <section id='abstract'>
+      This specification extends <em>Runtime and Security Model for Web
+      Applications</em> [[!SYSAPPS-RUNTIME]] with APIs exposed to
+      <a href="#privileged-applications">privileged applications</a> only.
     </section>
     <section id="conformance">
       <p>
