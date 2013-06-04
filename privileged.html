@@ -362,15 +362,15 @@ var respecConfig = {
             </dd>
           </dl>
           <p>
-            The <code>getAll</code> method SHOULD return a <a>DOMRequest</a>
+            The <code>getAll</code> method SHOULD return a <code><a>DOMRequest</a></code>
             object and asynchronously get all installed applications.
             When those applications are collected, the UA SHOULD send a
-            <code>success</code> event to the <a>DOMRequest</a> object and
+            <code>success</code> event to the <code><a>DOMRequest</a></code> object and
             populate its <code>request</code> attribute with an array of
-            <a>Application</a> objects representing the applications.
+            <code><a>Application</a></code> objects representing the applications.
           </p>
           <p>
-            The <code>applyUpdate</code> method MUST return a <a>DOMRequest</a>
+            The <code>applyUpdate</code> method MUST return a <code><a>DOMRequest</a></code>
             object and perform the following steps asynchronously:
           </p>
           <ol>
@@ -388,7 +388,7 @@ var respecConfig = {
             <li>If an error has occurred during the previous steps, the UA MUST
             send an <a>error message</a> to the request with any appropriate
             value. Otherwise, the UA MUST send a <a>success message</a> to the
-            request with an <a>Application</a> object representing the updated
+            request with an <code><a>Application</a></code> object representing the updated
             application as a value.
             </li>
           </ol>
@@ -401,20 +401,20 @@ var respecConfig = {
             An <a>install</a> event using the <a>ApplicationEvent</a> interface
             MUST be fired on all <a>ApplicationManagement</a> instances as soon
             as an application is installed with the <code>application</code>
-            attribute set to the <a>Application</a> object representing the
+            attribute set to the <code><a>Application</a></code> object representing the
             installed application.
           </p>
           <p>
             The <a>uninstall</a> event using the <a>ApplicationEvent</a>
             interface MUST be fired on all <a>ApplicationManagement</a>
             instances as soon as an application is uninstalled with the
-            <code>application</code> attribute set to the <a>Application</a>
+            <code>application</code> attribute set to the <code><a>Application</a></code>
             object representing the uninstalled application.
           </p>
           <p>
             The following are the <a>event handlers</a> (and their
             corresponding <a>event handler event types</a>) that MUST be
-            supported as attributes by the <code>ApplicationManagement</code>
+            supported as attributes by the <code><a>ApplicationManagement</a></code>
             object:
           </p>
           <table class="simple">
@@ -484,9 +484,8 @@ var respecConfig = {
         <p>
           <a>ApplicationEvent</a> objects MUST contain a non-null
           <code>application</code> attribute representing the application on
-          each the action happened.<br>
-          The application events are always sent asynchronously, do not bubble
-          and are not cancelable.
+          each the action happened. The application events are always sent
+          asynchronously, do not bubble and are not cancelable.
         </p>
         <p>
           There are currently two types of Application Events:
