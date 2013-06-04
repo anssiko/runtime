@@ -55,6 +55,34 @@ var respecConfig = {
       Applications</em> [[!SYSAPPS-RUNTIME]] with APIs exposed to
       <a href="#privileged-applications">privileged applications</a> only.
     </section>
+    <section class="informative">
+      <h2>
+        Introduction
+      </h2>
+      <p>
+        Some applications require access to APIs which, if abused, may
+        cause significant damage to the end user's services, data or
+        devices. For example, an API allowing the use of SMS could be
+        misused by a malicious application to send unwanted premium-rate
+        messages costing the user money.
+      </p>
+      <p>
+        Because the impact of using a malicious application with these
+        privileges is higher, additional security mechanisms and processes
+        are necessary to minimize the additional risk they present. This
+        might include, for example, mandatory review of applications or
+        certification. A simple user-authorized permission system is
+        considered insufficient: users could be tricked into granting a
+        malicious application access to inappropriate APIs, services or
+        data.
+      </p>
+      <p>
+        As a complement to permissioning, this specification defines a
+        <em>privileged</em> class of application. Applications which are
+        not privileged will not be able to access potentially dangerous
+        APIs.
+      </p>
+    </section>
     <section id="conformance">
       <p>
         There is only one class of product that can claim conformance to this
@@ -432,34 +460,6 @@ var respecConfig = {
         <h2>
           Privileged applications
         </h2>
-        <section class="informative">
-          <h2>
-            Use cases
-          </h2>
-          <p>
-            Some applications require access to APIs which, if abused, may
-            cause significant damage to the end user's services, data or
-            devices. For example, an API allowing the use of SMS could be
-            misused by a malicious application to send unwanted premium-rate
-            messages costing the user money.
-          </p>
-          <p>
-            Because the impact of using a malicious application with these
-            privileges is higher, additional security mechanisms and processes
-            are necessary to minimize the additional risk they present. This
-            might include, for example, mandatory review of applications or
-            certification. A simple user-authorized permission system is
-            considered insufficient: users could be tricked into granting a
-            malicious application access to inappropriate APIs, services or
-            data.
-          </p>
-          <p>
-            As a complement to permissioning, this specification defines a
-            <em>privileged</em> class of application. Applications which are
-            not privileged will not be able to access potentially dangerous
-            APIs.
-          </p>
-        </section>
         <section>
           <h2>
             Chain of trust
