@@ -454,149 +454,144 @@ var respecConfig = {
     </section>
     <section>
       <h2>
-        Permissions
+        Trust Mechanisms for Privileged Applications
       </h2>
       <section>
         <h2>
-          Trust Mechanisms for Privileged Applications
+          Chain of trust
         </h2>
-        <section>
-          <h2>
-            Chain of trust
-          </h2>
-          <p>
-            An application is said to be a <dfn>privileged application</dfn> if
-            the origin installing the application is trusted by the UA and the
-            origin installing the application considers the application to be
-            trustworthy.
-          </p>
-          <p>
-            A UA SHOULD have the public key of all installation origins it
-            considers to be trusted.
-          </p>
+        <p>
+          An application is said to be a <dfn>privileged application</dfn> if
+          the origin installing the application is trusted by the UA and the
+          origin installing the application considers the application to be
+          trustworthy.
+        </p>
+        <p>
+          A UA SHOULD have the public key of all installation origins it
+          considers to be trusted.
+        </p>
+      </section>
+      <section>
+        <h2>
+          Marking an application privileged
+        </h2>
+        <p>
+          A <a>hosted application</a> MUST be recognized as marked privileged
+          by the installation origin if the <a>application manifest</a> is
+          signed by the installation origin's private key.
+        </p>
+        <p>
+          A <a>packaged application</a> MUST be recognized as marked
+          privileged by the installation origin if the package is signed by
+          the installation origin's private key.
+        </p>
+        <p>
+          In both cases, the application SHOULD be considered as privileged
+          by the UA if the UA considers the installation origin as trusted,
+          following the chain of trust mentioned above.
+        </p>
+      </section>
+      <section class="informative">
+        <h2>
+          Security considerations
+        </h2>
+        <p>
+          UA should keep in mind that a signed package is way more secure
+          than a signed manifest. A correctly signed package can only be
+          compromised if the private key has been compromised or the
+          cryptographic algorithm. A UA should not trust an installation
+          origin if it does not trust its ability to keep safe its private
+          key.
+        </p>
+        <p>
+          On the other hands, a signed manifest only proves that the
+          application is genuinely trusted (if the private key was not
+          compromised nor the cryptographic algorithm). Anything else can be
+          compromised given that it lives in the Internet. There is no need
+          to list all possible attacks.
+        </p>
+        <p>
+          An important difference between a <a>packaged application</a> and a
+          <a>hosted application</a> is the ability to review the code. Any
+          permission granted to a <a>packaged application</a> will be granted
+          to the code inside the package only. That means trusting such
+          application is way easier after a code review, for example.
+        </p>
+        <p>
+          However, code review for <a>packaged application</a>s could be
+          avoided if the installation origin trusts enough an application
+          developer. Such developer could get all its <a>packaged
+          application</a>s trusted without too much risk for the users.<br>
+          The same thing could be done for <a>hosted application</a> except
+          that it would be recommended to make sure that the developer has
+          strong server security or would not risk any security flaw on their
+          servers.
+        </p>
+      </section>
+      <section>
+        <h2>
+          CSP Policy
+        </h2>
+        <section class="note">
+          The following sub-section assumes that a <a>privileged
+          application</a> can only be a <a>packaged application</a>. This
+          needs to be updated.
         </section>
-        <section>
-          <h2>
-            Marking an application privileged
-          </h2>
-          <p>
-            A <a>hosted application</a> MUST be recognized as marked privileged
-            by the installation origin if the <a>application manifest</a> is
-            signed by the installation origin's private key.
-          </p>
-          <p>
-            A <a>packaged application</a> MUST be recognized as marked
-            privileged by the installation origin if the package is signed by
-            the installation origin's private key.
-          </p>
-          <p>
-            In both cases, the application SHOULD be considered as privileged
-            by the UA if the UA considers the installation origin as trusted,
-            following the chain of trust mentioned above.
-          </p>
-        </section>
-        <section class="informative">
-          <h2>
-            Security considerations
-          </h2>
-          <p>
-            UA should keep in mind that a signed package is way more secure
-            than a signed manifest. A correctly signed package can only be
-            compromised if the private key has been compromised or the
-            cryptographic algorithm. A UA should not trust an installation
-            origin if it does not trust its ability to keep safe its private
-            key.
-          </p>
-          <p>
-            On the other hands, a signed manifest only proves that the
-            application is genuinely trusted (if the private key was not
-            compromised nor the cryptographic algorithm). Anything else can be
-            compromised given that it lives in the Internet. There is no need
-            to list all possible attacks.
-          </p>
-          <p>
-            An important difference between a <a>packaged application</a> and a
-            <a>hosted application</a> is the ability to review the code. Any
-            permission granted to a <a>packaged application</a> will be granted
-            to the code inside the package only. That means trusting such
-            application is way easier after a code review, for example.
-          </p>
-          <p>
-            However, code review for <a>packaged application</a>s could be
-            avoided if the installation origin trusts enough an application
-            developer. Such developer could get all its <a>packaged
-            application</a>s trusted without too much risk for the users.<br>
-            The same thing could be done for <a>hosted application</a> except
-            that it would be recommended to make sure that the developer has
-            strong server security or would not risk any security flaw on their
-            servers.
-          </p>
-        </section>
-        <section>
-          <h2>
-            CSP Policy
-          </h2>
-          <section class="note">
-            The following sub-section assumes that a <a>privileged
-            application</a> can only be a <a>packaged application</a>. This
-            needs to be updated.
-          </section>
-          <p>
-            The following CSP policy MUST apply to all <a>privileged
-            application</a>s [[!CSP]]:<br>
-          </p>
-          <p>
-            <code>default-src *; script-src 'self'; object-src 'none';
-            style-src 'self'</code>
-          </p>
-          <p>
-            This puts the following restrictions on web pages part of a
-            <a>privileged application</a>:
-          </p>
-          <ul>
-            <li>Scripts can only be loaded from the package;
-            </li>
-            <li>Scripts can not use data:-URIs;
-            </li>
-            <li>Inline scripts can not be used;
-            </li>
-            <li>eval() can not be used. Neither can eval-like functions like
-            setTimeout or "new Function". setTimeout can still be used as long
-            as the first argument is a Function object rather than a string;
-            </li>
-            <li>onXXX attributes can't be used in the markup of pages. However,
-            using the associated <a>EventHandler</a> is doable. For example:
-            myElement.onXXX = someFunction;
-            </li>
-            <li>&lt;object&gt;, &lt;embed&gt; and &lt;applet&gt; are fully
-            disabled. In other words, plugins won't work at all. Including
-            flash.
-            </li>
-            <li>CSS can only be loaded from the package. Inline CSS is however
-            allowed.
-            </li>
-          </ul>
-          <p>
-            This does not restrict any of the following:
-          </p>
-          <ul>
-            <li>&lt;iframe&gt;s can still point to any URL;
-            </li>
-            <li>Images can still be loaded from anywhere. Including when loaded
-            using an &lt;img&gt; element, when using CSS background images or
-            when using other types of CSS images;
-            </li>
-            <li>Media (audio and video) can still be loaded from anywhere;
-            </li>
-            <li>Network connections can still be opened anywhere using
-            data-centric APIs like XMLHttpRequest or WebSocket.
-            </li>
-          </ul>
-          <p>
-            There is no way for <a>privileged application</a>s to relax this
-            policy.
-          </p>
-        </section>
+        <p>
+          The following CSP policy MUST apply to all <a>privileged
+          application</a>s [[!CSP]]:<br>
+        </p>
+        <p>
+          <code>default-src *; script-src 'self'; object-src 'none';
+          style-src 'self'</code>
+        </p>
+        <p>
+          This puts the following restrictions on web pages part of a
+          <a>privileged application</a>:
+        </p>
+        <ul>
+          <li>Scripts can only be loaded from the package;
+          </li>
+          <li>Scripts can not use data:-URIs;
+          </li>
+          <li>Inline scripts can not be used;
+          </li>
+          <li>eval() can not be used. Neither can eval-like functions like
+          setTimeout or "new Function". setTimeout can still be used as long
+          as the first argument is a Function object rather than a string;
+          </li>
+          <li>onXXX attributes can't be used in the markup of pages. However,
+          using the associated <a>EventHandler</a> is doable. For example:
+          myElement.onXXX = someFunction;
+          </li>
+          <li>&lt;object&gt;, &lt;embed&gt; and &lt;applet&gt; are fully
+          disabled. In other words, plugins won't work at all. Including
+          flash.
+          </li>
+          <li>CSS can only be loaded from the package. Inline CSS is however
+          allowed.
+          </li>
+        </ul>
+        <p>
+          This does not restrict any of the following:
+        </p>
+        <ul>
+          <li>&lt;iframe&gt;s can still point to any URL;
+          </li>
+          <li>Images can still be loaded from anywhere. Including when loaded
+          using an &lt;img&gt; element, when using CSS background images or
+          when using other types of CSS images;
+          </li>
+          <li>Media (audio and video) can still be loaded from anywhere;
+          </li>
+          <li>Network connections can still be opened anywhere using
+          data-centric APIs like XMLHttpRequest or WebSocket.
+          </li>
+        </ul>
+        <p>
+          There is no way for <a>privileged application</a>s to relax this
+          policy.
+        </p>
       </section>
     </section>
     <section class="appendix">
