@@ -422,29 +422,6 @@ var respecConfig = {
     </section>
     <section>
       <h2>
-        Navigation
-      </h2>
-      <p>
-        Depending on the user interface around the application context,
-        navigating outside the <a>application's origin</a> might lock the user
-        out of the application. To prevent that, the UA SHOULD NOT allow
-        navigation out of the <a>application's origin</a>, unless the origin is
-        specified in the following <a>application manifest</a> property:
-      </p>
-      <ul>
-        <li>
-          <dfn id='prop-allow-navigation'>allow-navigation</dfn>: the property
-          SHOULD contain an array of origins that can be navigated to from the
-          application.
-        </li>
-      </ul>
-      <p>
-        If the application tries to navigate to an unauthorized origin, the UA
-        SHOULD open the link in a regular but distinct browsing context.
-      </p>
-    </section>
-    <section>
-      <h2>
         System Messages
       </h2>
       <div class="todo">
