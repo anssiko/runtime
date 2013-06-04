@@ -279,6 +279,31 @@ var respecConfig = {
       </h2>
       <section>
         <h2>
+          Extension to the <a>ApplicationRegistry</a> interface
+        </h2>
+        <section>
+          <p>
+            An <a>ApplicationManagement</a> instance is exposed on the
+            <code>ApplicationRegistry</code> object through the
+            <code>management</code> attribute.
+          </p>
+          <dl title='partial interface ApplicationRegistry' class='idl'>
+            <dt>
+              readonly attribute ApplicationManagement management
+            </dt>
+            <dd>
+              The attribute MUST return an <a>ApplicationManagement</a> instance.
+            </dd>
+          </dl>
+          <p>
+            If the caller is not allowed to manage applications, the UA must
+            return null. Otherwise, it must return an <a>ApplicationManagement</a>
+            object.
+          </p>
+        </section>
+      </section>
+      <section>
+        <h2>
           Extension to the <a>Navigator</a> interface
         </h2>
         <section>
