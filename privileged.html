@@ -322,9 +322,11 @@ var respecConfig = {
           </p>
           <div class="issue">
             <p>
-              <a href="https://github.com/sysapps/runtime/issues/92">
-              Move Application.uninstall() to ApplicationManagement.
-              </a>
+              Move <code><a href="https://github.com/sysapps/runtime/issues/92">
+              Application.uninstall()</a></code> and
+              <code>Application.updateState</code> to
+              <code>ApplicationManagement</code>; consider adding
+              an event handler for <code>updateState</code>.
             </p>
           </div>
           <dl title='interface ApplicationManagement' class='idl'>
