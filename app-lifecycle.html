@@ -923,15 +923,19 @@ var respecConfig = {
         </p>
         <p>
           When an application subscribes to an event, it will be subscribed
-          to it until the application unsubscribes or is uninstalled or updated.
-          On update it is thus the responsibility of the application
-          responsibility to re-subscribe to the event.
+          to it until the application unsubscribes, is uninstalled, updated
+          or relaunched. On relaunch or update it is thus the responsibility
+          of the application responsibility to re-subscribe to the event;
+          if not the context will not know what to call.
         </p>
+        <p>
           When an application is launched as a result of a persistent event,
-          its <a>main document</a> is loaded, the <code>launch</code> event is
-          dispatched, and immediately after the <code>launch</code> event the
-          persistent event handler is called. If the event handler does not
-          exist anymore, nothing happens.
+          firstly its <a>main document</a> is loaded, then the
+          <code>launch</code> event is dispatched, and immediately after
+          the <code>launch</code> event, the persistent event handler is
+          called. If the application did not read the listener as part
+          of the launch event, nothing happens.
+        </p>
           <section>
             <h3>Filtered Events</h3>
             <p>
@@ -976,7 +980,8 @@ var respecConfig = {
         proposal referenced in the
         <a href="http://www.w3.org/2012/09/sysapps-wg-charter.html">
         System Applications Working Group Charter</a>. Thanks to the
-        Chrome team for their experiments with Packaged Apps.
+        Chrome team for their experiments with Packaged Apps. Also
+        special thanks to Thiago Marcos P. Santos for his comments.
       </p>
     </section>
   </body>
