@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>
+      Application Lifecycle and Events
+    </title>
+    <script src="http://www.w3.org/Tools/respec/respec-w3c-common" class=
+    "remove">
+</script>
+    <script class='remove'>
+var respecConfig = {
+        specStatus:           "ED",
+        shortName:            "app-lifecycle",
+
+        //publishDate:  "2012-12-12",
+        //previousPublishDate:  "2013-03-21",
+        previousMaturity:     "ED",
+        edDraftURI:           "http://www.w3.org/2012/sysapps/runtime/app-lifecycle.html",
+        // lcEnd: "3000-01-01",
+        // crEnd: "3000-01-01",
+
+        editors: [
+            {
+              name: "Anssi Kostiainen",
+              company: "Intel",
+              companyURL: "http://intel.com/"
+            },
+            {
+              name: "Kenneth Rohde Christiansen",
+              company: "Intel",
+              companyURL: "http://intel.com/"
+            },
+        ],
+
+        inlineCSS:     true,
+        noIDLIn:       true,
+        noLegacyStyle: true,
+        extraCSS:      ["../ReSpec.js/css/respec.css"],
+
+        wg:           "System Applications Working Group",
+        wgURI:        "http://www.w3.org/2012/sysapps/",
+        wgPublicList: "public-sysapps",
+        wgPatentURI:  "http://www.w3.org/2004/01/pp-impl/58119/status",
+        subtitle:     "A Runtime and Security Model Extension Specification" 
+      };
+    </script>
+    <style>
+.todo { display: none; }
+    </style>
+  </head>
+  <body>
+    <section id='abstract'>
+      This extension specification to the [[!SYSAPPS-RUNTIME]] describes a new
+      <a>JavaScript global environment</a>, the <a>main environment</a>, and defines
+      APIs for managing the lifecycle of an application and associated events
+      exposed to this environment.
+    </section>
+    <section class="informative">
+      <h2>
+        Introduction
+      </h2>
+      <p>
+        An application consists of a main entrance, which is a non-visible
+        document whose purpose is to handle the application lifecycle. This
+        special-purpose document, referred to as the <a>main document</a>, has the
+        ability to react to persistent events, schedule tasks as well as
+        create additional windows, allowing to create regular applications
+        as well as background services.
+      </p>
+      <p>
+        The application in the context of this specification is defined as
+        a packaged or hosted web application that has referenced the main
+        document in its manifest [SYSAPPS-MANIFEST].
+      </p>
+      <p>
+        Using the APIs defined in this specification, an application is
+        able to run its application logic in the main document independently
+        of any user interface scripts and react to:
+      </p>
+      <ul>
+        <li>
+          Changes in the application lifecycle such as launch and terminate
+          (<a>application events</a>)
+        </li>
+        <li>
+          Events sent by the system (<a>persistent events</a>)
+        </li>
+        <li>
+          Scheduled wakeup calls
+        </li>
+      </ul>
+      <p>
+        The manifest (<code>manifest.json</code>) states which file is used
+        to represent the <a>main document</a>.
+      </p>
+      <pre class="example highlight">
+        {
+          "main": { 'source': 'main.html' }
+        }
+      </pre>
+      <p>
+        The <a>main document</a> has the ability to listen to the
+        <code>launch</code> event and for instance create a window.
+        It is also possible to access the document for the window
+        which was created.
+      </p>
+      <pre class="example highlight">
+        &lt;script&gt;
+        runtime.onlaunch = function() {
+          // Create a window for a given url.
+          runtime.<a href="app-windowing.html#idl-def-ApplicationRuntime">createWindow</a>('main_ui.html').fulfill(function(created_window) {
+            // Get the document for the window resource.
+            contentDocument = created_window.contentWindow.document;
+            contentDocument.baz = 'Hello from app';
+          });
+        };
+        &lt;/script&gt;
+      </pre>
+      <p>
+        Alternatively, if the author wants to show the window only when all
+        content and referenced resources have been loaded, it is possible to
+        initially hide the constructed window and listen to the
+        <code>load</code> event on the newly constructed window. In
+        this example a <code>ready()</code> function is created, that
+        returns a <code>Promise</code> [[!DOM]] responsible for listening
+        to the document readiness of the constructed window.
+      </p>
+      <pre class="example highlight">
+        &lt;script&gt;
+        function ready(document) { 
+          return new Promise(function(resolver) {
+            document.onload = function() {
+              if (document.readyState == "complete") resolver.resolve();
+            };
+          });
+        }
+
+        runtime.onlaunch = function() {
+          // Create an initially hidden window for a given url.
+          runtime.<a href="app-windowing.html#idl-def-ApplicationRuntime">createWindow</a>('main_ui.html', { hidden: true })
+            .fulfill(function(created_window) {
+
+              // Get the document for the window resource.
+              contentDocument = created_window.contentWindow.document;
+
+              // Show the window when all content has loaded, incl. images.
+              ready(contentDocument).fulfill(
+                function() { created_window.show(); }
+              );
+            }
+          );
+        };
+        &lt;/script&gt;        
+      </pre>
+    </section>
+    <section id="conformance">
+      <p>
+        There is only one class of product that can claim conformance to this
+        specification: a <dfn>user agent</dfn>.
+      </p>
+      <p>
+        The IDL fragments in this specification must be interpreted as required
+        for conforming IDL fragments, as described in the Web IDL
+        specification. [[!WEBIDL]].
+      </p>
+      <section>
+        <h3>Dependencies</h3>
+        <p>
+          This specification relies on the following specification:
+        </p>
+        <ul>
+          <li>
+            <a href="app-windowing.html">Application Windowing</a>
+          </li>
+        </ul>
+        <div class="note">
+          The Application Windowing specification extends the
+          <code><a>ApplicationRuntime</a></code> interface,
+          but is currently split into its own specification
+          for convenience.
+        </div>
+      </section>
+    </section>
+    <section>
+      <h2>
+        Terminology
+      </h2>
+      <p>
+        The term <dfn>JavaScript global environment</dfn> refers to the global
+        environment concept defined in [[!ECMA-262]].
+      </p>
+      <p>
+        The terms <dfn>main environment</dfn> and <dfn>main document</dfn>
+        refer to the main entry point of the application to the system.
+      </p>
+      <p>
+        The <dfn><a href=
+        "http://dev.w3.org/html5/spec/webappapis.html#event-handlers">EventHandler</a></dfn>
+        interface represents a callback used for event handlers as defined in
+        [[!HTML5]].
+      </p>
+      <p>
+        The concepts <dfn><a href="http://dev.w3.org/html5/spec/webappapis.html#queue-a-task">
+        queue a task</a></dfn> and
+        <dfn><a href="http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">
+        fire a simple event</a></dfn> are defined in [[!HTML5]].
+      </p>
+      <p>
+        The terms <dfn><a href=
+        "http://dev.w3.org/html5/spec/webappapis.html#event-handlers">event
+        handlers</a></dfn> and <dfn><a href=
+        "http://dev.w3.org/html5/spec/webappapis.html#event-handler-event-type">
+        event handler event types</a></dfn> are defined in [[!HTML5]].
+      </p>
+    </section>
+    <section class="informative">
+      <h2>
+        Use Cases and Requirements
+      </h2>
+      <p>
+        Below is a list of use cases derived from initial input to the
+        <a href="http://www.w3.org/2012/09/sysapps-wg-charter.html">
+        System Applications Working Group Charter</a> that are not addressed
+        by the Runtime and Security Model for Web Applications
+        [[SYSAPPS-RUNTIME]].
+      </p>
+      <section>
+        <h2>
+          A Single Entry Point to the Application
+        </h2>
+        <p>
+          The <a>main document</a> is used as the main entry point of the
+          application to the system. When loading the <a>main document</a>,
+          the runtime must not display it to the user. If the application
+          intents to show any user interface it has to create
+          windows or interact with the platform in other ways such as by
+          using a notification system.
+        </p>
+        <p>
+          There must be exactly one <a>main document</a> per application that can
+          be authored in pure JavaScript or, as usual, in HTML with JavaScript either
+          embedded inline or imported from an external file using the script
+          element. If pure JavaScript is used, an empty document should be
+          created, including the associated scripts in their declared order.
+        </p>
+        <p>
+          In the following example, instead of loading an HTML page, an
+          implicit one is constructed which loads <code>polymer.min.js</code>
+          followed by loading <code>main.js</code>.
+        </p>  
+        <pre class="example highlight">
+          {
+           "main": { "scripts": ["polymer.min.js", "main.js"] }
+          }
+        </pre>
+        <p>
+          The runtime may unload the <a>main document</a> in certain circumstances,
+          which results in termination of the application. When the
+          <a>main document</a> is not executing any script, has no pending
+          callbacks, and no open windows, the runtime can decide to unload the
+          <a>main document</a>. In addition, the runtime may unload the <a>main
+          document</a> in order to reduce resource consumption.
+          For example, after loading the <a>main document</a> and no window is
+          visible, the application can be terminated by the runtime.
+        </p>
+        <p>
+          The runtime must prevent an application from interfering
+          with the application's termination, e.g. event listeners or long-running
+          scripts using APIs such as Geolocation, setTimeout, XMLHttpRequest should
+          not block the runtime from terminating the application.
+        </p>
+      </section>
+      <section>
+        <h2>
+          Behavior Adaptation at Launch
+        </h2>
+        <p>
+          The runtime does not create any visible windows by itself when
+          launching an application. This is up to the application and
+          should be handled as part of the <code>launch</code> event.
+          When launched, the application will know the reason for the
+          launch. The reason could be a scheduled wake up, a persistent
+          event of interest or a direct launch either by the system,
+          other applications or user initiated. This allows the
+          application to act differently depending on the reason.
+        </p>
+        <section>
+          <h3>Persistent Event-initiated Launch</h3>
+          <p>
+            The runtime may start the application for the purpose of
+            delivering events from the system. For example, a system-level
+            service might ask an email application to send an email on its
+            behalf. To handle these cases, the runtime must launch the
+            application in the background. The application must be listening
+            to persistent events in order to be launched in response to them. 
+          </p>
+          <p>
+            An application may subscribe to persistent events either at
+            install time or at runtime. 
+          </p>
+          <p>
+            The runtime should not indicate that applications without
+            windows associated, often known as background services, are
+            running in, meaning that the application should not appear
+            in any system-wide task switcher.
+          </p>
+          <div class="note">
+            Should it be an implementation detail whether background
+            services are visible e.g. in a system monitor?
+          </div>
+        </section>
+        <section>
+          <h3>Wakeup-initiated Launch</h3>
+          <p>
+            An application can schedule itself for wake-up by scheduling
+            a task according to the Application Task Scheduling
+            [SYSAPPS-TASK-SCHED]. On the contrary to setTimeout which will
+            not be called when the application has been terminated, the
+            tasks will ensure that the application is running and that
+            the launch event has been fired on the main document before
+            resolving the Promise associated with the task.
+          </p>
+          <p>
+            In the the following example, a "Still awake?..." message is
+            sent to the application in 10 minutes, and the application
+            woken up if it is not running.
+          </p>
+          <pre class="example highlight">
+            var when = new Date(Date.now() + 600000);
+            
+            runtime.taskScheduler.add(when, "respectTimezone", { message: "Still awake?..." })
+            .fulfill(function(task) { console.log(task.data.message); });
+          </pre>
+          <p>
+            Note that in order to run the tasks at the scheduled time,
+            the application should be started a bit earlier.
+          </p>
+        </section>
+      </section>
+      <section>
+        <h2>
+          Termination Sequence
+        </h2>
+        <p>
+          The runtime may terminate the application if the it becomes idle
+          or in case or resource constraints.
+        </p>
+        <p>
+          Before actual termination, the <code>terminate</code> event 
+          is sent, giving the application has the ability to clear up,
+          store state and close windows. In case that the applications 
+          does not terminate within a given time, the runtime may
+          consider the application as too slow or hanging and has the
+          ability to terminate it immediately (forced termination).
+          It is recommended that applications automatically saves their
+          state periodically to protect against data loss, in such a case.
+        </p>
+        <p>
+          After the <code>terminate</code> event, or in case of forced
+          termination, the runtime should progress to actual termination,
+          which should at least include closing all remaining windows and
+          unloading of the main document. What other resources the runtime
+          unloads is up to the implementation.
+        </p>
+        <p>
+          There is an exception as the application can receive a wakeup
+          or a persistent event while processing the terminate event.
+          If this is the case, the terminate event is followed by a
+          <code>terminatecanceled</code> event, as actual termination
+          will not happen.
+        </p>
+        <p>
+          The runtime should avoid terminating an active, focused
+          application if at all possible. However, the runtime may
+          terminate that application as a last resort (e.g., due to
+          resource exhaustion or bad behavior).
+        </p>
+      </section>
+      <section>
+        <h2>Creating Windows</h2>
+        <p>
+          One or more windows might be created from the main document.
+          These windows are directly scriptable by the main document.
+        </p>
+        <div class="note">
+          TODO: expand windowing use cases in a separate specification.
+        </div>
+      </section>
+      <section>
+        <h2>
+          Requirements
+        </h2>
+        <div class="note">
+          Map these requirements to corresponding
+          <a href="https://github.com/sysapps/runtime/issues/">
+          issues in GitHub</a>.
+        </div>
+        <p>
+          Below is a summary of requirements derived from the above
+          use cases:
+        </p>
+        <ol>
+          <li>
+            An application (e.g. a background service) must be able
+            to run without visible user interface.
+          </li>
+          <li>
+            An application must be able to decide when to show the
+            user interface, if at all. It should be up to the
+            application developer to decide when it is appropriate
+            to show the user interface.
+          </li>
+          <li>
+            An application must be able to show the user interface
+            only after it is fully constructed and all the needed
+            data has been loaded.
+          </li>
+          <li>
+            The runtime model must support authoring an application
+            (or a service without user interface) that can be
+            terminated without user’s consent, and that is able to
+            restore to its previous state.
+          </li>
+          <li>
+            After being launched, an application must be able to
+            execute scripts to recreate its state before recreating
+            the actual user interface.
+          </li>
+          <li>
+            An application must be able to show a different user
+            interface given how the app was launched.
+            <ul>
+              <li>
+                For example, if launched as a photo picker should not show the default application window, but instead create a special purpose user interface.
+              </li>
+            </ul>
+          </li>
+          <li>
+            The runtime must provide a mechanism to prevent an
+            application from being launched unneededly.
+          </li>
+          <li>
+            The runtime must provide a one entry point for window
+            creation to prevent race conditions (see
+            <a href="https://github.com/sysapps/runtime/issues/100">#100</a>).
+          </li>
+          <li>
+            The application must be able to create a window and
+            have it laid out correctly with the right dimensions
+            before being shown.
+            <ul>
+              <li>
+                This allows emulating the splash screen/application
+                screenshot at launch for any screen size, before
+                loading any application logic, so that the screenshot
+                is not needed to be part of the manifest.
+              </li>
+            </ul>
+          </li>
+          <li>
+            As the persistent events can result in launching dormant
+            apps, it is important that that only happens for subscribed
+            events and it should support some kind of prefiltering,
+            such that if the app listens to say a usb-plugged signal,
+            it can define to only listen to a specific device
+            connected or a specific port.
+          </li>
+        </ol>
+      </section>
+    </section>
+    <section>
+      <h2>Infrastructure</h2>
+      <section>
+        <h3>Main Document</h3>
+        <p>
+          There is only one <dfn>main document</dfn> per application.
+        </p>
+        <div class="note">
+          Define the main document, and explain relationship between the
+          main document and the main environment.
+        </div>
+        <section>
+          <h3>Creating a Main Document</h3>
+          <div class="note">
+            Steps for <dfn>create a main document</dfn> must be defined.
+          </div>
+        </section>
+        <section>
+          <h3>APIs Available to the Main Document</h3>
+          <p>
+            The interfaces defined in this specification must be only
+            exposed to JavaScript if the <a>JavaScript global environment</a>
+            is a <a>main environment</a>.
+          </p>
+          <div class="note">
+            Describe disabled features and APIs, or APIs that may behave
+            differently. For example, synchronous blocking APIs such as
+            alert() and prompt() are disallowed. For the same reasons,
+            window.open() should perhaps be disallowed.
+          </div>
+        </section>
+      </section>
+      <section>
+        <h3>Application Events</h3>
+        <p>
+          The runtime context associated with the main document can
+          be launched and terminated either by the user, other
+          applications or by the system. The system can decide to
+          terminate an application as long as it is considered
+          idle (no visible views or connected message ports).
+          In the case the application received an event (or something
+          similar, like a task was scheduled) while handling terminate,
+          the terminatecanceled event will be fired successively and
+          the main document will stay active until considered idle again.
+        </p>
+        <p>
+          When the application is launched, the launch event is fired
+          with a reason which can be of type <code>pending-event</code>,
+          <code>scheduled</code> or <code>other</code>. If the
+          application was launched in order to handle an event it
+          subscribed to or in response to a scheduled task, the type
+          will be <code>pending-event</code> and <code>scheduled</code>
+          respectively. This allows for the application to avoid creating
+          any user interface not resulting from the respective event
+          handling.
+        </p>
+        <p>
+          In the case the user or another application started the 
+          application, the reason is set to <code>other</code>, allowing
+          the main document to load the default user interface and
+          potentially a “screenshot” of the application while the
+          main user interface is being built in the background.
+        </p>
+        <p>
+          For handling application lifecycle, an application
+          <a>main document</a> can listen to the events defined below.
+        </p>
+      </section>
+    </section>
+    <section>
+      <h2>
+        Application Lifecycle Extensions
+      </h2>
+      <section>
+        <h2>
+          Extension to the <a>Window</a> interface
+        </h2>
+        <section>
+          <p>
+            An <a>ApplicationRuntime</a> instance is exposed on the
+            <code>Window</code> object through the
+            <code>runtime</code> attribute.
+          </p>
+          <dl title='partial interface Window' class='idl'>
+            <dt>
+              readonly attribute ApplicationRuntime runtime
+            </dt>
+            <dd>
+              The attribute MUST return an <a>ApplicationRuntime</a> instance.
+            </dd>
+          </dl>
+        </section>
+      </section>
+      <section>
+        <h2>
+          <a>ApplicationRuntime</a> interface
+        </h2>
+        <section>
+          <dl title='interface ApplicationRuntime' class='idl'>
+            <dt>
+              attribute EventHandler onlaunch
+            </dt>
+            <dd>
+            </dd>
+            <dt>
+              attribute EventHandler onterminate
+            </dt>
+            <dd>
+            </dd>
+            <dt>
+              attribute EventHandler onterminatecanceled
+            </dt>
+            <dd>
+            </dd>
+          </dl>
+          <p>
+            When the <dfn>application is launched</dfn>, the user agent
+            must queue a task to <a>launch the application</a>.
+          </p>
+          <p>
+            When the <dfn>application is terminated</dfn>, the user agent
+            must queue a task to <a>terminate the application</a>.
+          </p>
+          <p>
+            When the <dfn>application termination is canceled</dfn>, the
+            user agent must queue a task to <a>cancel the termination</a>.
+          </p>
+          <p>
+            The following are the event handlers (and their corresponding
+            event handler event types) that must be supported, as event
+            handler IDL attributes, by all objects implementing the
+            ApplicationRuntime interface:
+          <table class="simple">
+            <thead>
+              <tr>
+                <th>
+                  event handler
+                </th>
+                <th>
+                  event handler event type
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <strong><code>onlaunch</code></strong>
+                </td>
+                <td>
+                  <code>launch</code>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong><code>onterminate</code></strong>
+                </td>
+                <td>
+                  <code>terminate</code>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong><code>onterminatecanceled</code></strong>
+                </td>
+                <td>
+                  <code>terminatecanceled</code>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+        <section>
+          <h3>Launching the Application</h3>
+          <dl title='[Constructor(DOMString type, optional LaunchEventInit eventInitDict)] interface LaunchEvent : Event' class='idl' data-merge="LaunchEventInit">
+            <dt>
+              readonly attribute DOMString reason
+            </dt>
+            <dd>
+            </dd>
+          </dl>
+          <dl title="dictionary LaunchEventInit : EventInit" class='idl'>
+            <dt>
+              attribute DOMString reason
+            </dt>
+            <dd>
+            </dd>
+          </dl>
+          <p>
+            When the user agent is required to <dfn>launch the application</dfn>,
+            the user agent must run the following steps:
+          </p>
+          <ol>
+            <li>
+              Create a new <a>main document</a>, if there is no
+              <a>main document</a>.
+            </li>
+            <li>
+              Spin the event loop until the <code>DOMContentLoaded</code>
+              event is fired.
+            </li>
+            <li>
+              Create a <a>LaunchEvent</a> object and initialize it with the
+              given name <code>launch</code>.
+            </li>
+            <li>
+              Initialize the <code>reason</code> attribute to a value
+              corresponding to a launch <a>reason</a> as defined in the
+              table below.
+            </li>
+            <li>
+              Dispatch the newly created <code><a>LaunchEvent</a></code>
+              object at the <code><a>ApplicationRuntime</a></code> object.
+            </li>
+          </ol>
+          <table class="simple">
+            <thead>
+              <tr>
+                <th>
+                  <code>reason</code> attribute value
+                </th>
+                <th>
+                  Description
+                </th>
+                <th>
+                  Times [fired]
+                </th>
+                <th>
+                  When
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <code>pending-event</code>
+                </td>
+                <td>
+                  The application is launched in response to a persistent event it is listening to.
+                </td>
+                <td>
+                  Zero or more.
+                </td>
+                <td>
+                  After <code>DOMContentLoaded</code> has been dispatched.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <code>scheduled</code>
+                </td>
+                <td>
+                  The application is launched by the system at the scheduled time.
+                </td>
+                <td>
+                  Zero or more.
+                </td>
+                <td>
+                  TODO
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <code>other</code>
+                </td>
+                <td>
+                  Other reason.
+                </td>
+                <td>
+                  Zero or more.
+                </td>
+                <td>
+                  After <code>DOMContentLoaded</code> has been dispatched.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h3>Terminating the Application</h3>
+          <p>
+            When the user agent is required to <dfn>terminate the application</dfn>,
+            it must run the following steps:
+          </p>
+          <ol>
+            <li>
+              Fire a simple event named terminate at the
+              <code><a>ApplicationRuntime</a></code> object.
+            </li>
+            <li>
+              Spin the event loop for a user-agent-defined amount of time
+              <div class="note">
+                This is intended to allow the application to run scripts to
+                persist state, do clean up tasks before being terminated).
+              </div>
+            </li>
+            <li>
+              Close all the windows created by the <a>main environment</a>.
+            </li>
+            <li>
+              <a href="http://www.w3.org/TR/html5/browsers.html#discard-a-document">
+              Discard the main document</a>.
+          </ol>
+        </section>
+
+        <section>
+          <h3>Canceling the Termination</h3>
+          <dl title='[Constructor(DOMString type, optional TerminateCanceledEventInit eventInitDict)] interface TerminateCanceledEvent : Event' class='idl' data-merge="TerminateEventInit">
+            <dt>
+              readonly attribute DOMString reason
+            </dt>
+            <dd>
+            </dd>
+          </dl>
+          <dl title="dictionary TerminateCanceledEventInit : EventInit" class='idl'>
+            <dt>
+              attribute DOMString reason
+            </dt>
+            <dd>
+            </dd>
+          </dl>
+          <p>
+            When the user agent is required to <dfn>cancel the termination</dfn>,
+            the user agent must run the following steps:
+          </p>
+          <ol>
+            <li>
+              Cancel the already-running instance of the <a>terminate the application</a>
+              algorithm, if any.
+            </li>
+            <li>
+              Spin the event loop until the <code>DOMContentLoaded</code>
+              event is fired.
+            </li>
+            <li>
+              Create an event that uses the <code><a>TerminateCanceledEvent</a></code>
+              interface, with the name <code>terminatecanceled</code>.
+            </li>
+            <li>
+              Initialize the <code>reason</code> attribute to a value
+              corresponding to a terminate cancellation <a>reason</a> as defined in the
+              table below.
+            </li>
+            <li>
+              Dispatch the newly created <code><a>TerminationCanceledEvent</a></code>
+              object at the <code><a>ApplicationRuntime</a></code> object.
+            </li>
+          </ol>
+          <table class="simple">
+            <thead>
+              <tr>
+                <th>
+                  <code>reason</code> attribute value
+                </th>
+                <th>
+                  Description
+                </th>
+                <th>
+                  Times [fired]
+                </th>
+                <th>
+                  When
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  -
+                </td>
+                <td>
+                  -
+                </td>
+                <td>
+                  -
+                </td>
+                <td>
+                  -
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  -
+                </td>
+                <td>
+                  -
+                </td>
+                <td>
+                  -
+                </td>
+                <td>
+                  -
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </section>
+      <section>
+        <h2>Persistent Events</h2>
+        <p>
+          A <dfn>persistent event</dfn> is an event that persists over
+          the lifetime of an application. These events do not originate
+          from the DOM itself and thus live outside of the document
+          lifetime. As applications can be terminated, a new type of
+          event is required which can wake up an application as a result.
+        </p>
+        <div class="note">
+          Should an application be required to resubscribe to events
+          when launched?
+        </div>
+        <p>
+          To prevent application from being woken up for no reason,
+          filtering must happen in the runtime and not in an application.
+        </p>
+        <p>
+          Persistent events are similar to regular events, but outlive
+          the lifetime of the document. Each event can have its own
+          filtering system defined, allowing the runtime to only wake
+          up applications for events the applications is interested
+          in and given the filter rules defined.
+        </p>
+        <p>
+          Subscribing to the imaginable <code>onnectionchanged</code>
+          persistent event, filtering to only get triggered when the
+          system device is being connected to AC power.
+        </p>
+        <pre class="example highlight">
+          power.onconnectionchanged.addPersistentEventListener({"connectionType": "ac-power"},
+            function() {
+               // Change battery icon.
+            }
+          );
+        </pre>
+        <p>
+          Persistent events are not meant for any event types depending
+          on document state given that the document might be unloaded
+          and it is also not meant for cross document communication,
+          for which Shared Workers can be used.
+        </p>
+        <p>
+          Not all events (defined in [[!HTML5]]) depend on document state
+          or interaction with the document. For example, the browser
+          orientation or device motion are defined in their own specifications.
+          The persistent events are not meant for this type of events
+          that either require a visible window or are intended to be fired 
+          frequently.
+        </p>
+        <p>
+          Instead, persistent events are applicable to event types that fire
+          at low frequency and support filtering.
+        </p>
+        <p>
+          When an application subscribes to an event, it will be subscribed
+          to it until the application unsubscribes or is uninstalled or updated.
+          On update it is thus the responsibility of the application
+          responsibility to re-subscribe to the event.
+        </p>
+          When an application is launched as a result of a persistent event,
+          its <a>main document</a> is loaded, the <code>launch</code> event is
+          dispatched, and immediately after the <code>launch</code> event the
+          persistent event handler is called. If the event handler does not
+          exist anymore, nothing happens.
+          <section>
+            <h3>Filtered Events</h3>
+            <p>
+              Filtered events are a mechanism that allows listeners to
+              specify a subset of events that they are interested in.
+              A listener that makes use of a filter is not invoked for
+              events that do not pass the filter, which makes the listening
+              code more declarative and efficient.
+            </p>
+            <p>
+              Subscribing to the imaginable <code>connectionchanged</code>
+              (refer to the previous example) persistent event, filtering to
+              only get triggered when the system device is being connected to
+              AC power.
+              <pre class="example highlight">
+                navigation.oncommitted.addPersistentEventListener(
+                  { url: [{hostSuffix: 'example.com'}, {hostSuffix: 'example.org'}] },
+                  function(e) {
+                    // ...
+                  });
+              </pre>
+          </section>
+          <section>
+            <h3>Event Registration</h3>
+            <p>
+              The listeners only exist in the context of the <a>main document</a>.
+              <code>addPersistentEventListener</code> must be called each time the
+              <a>main document</a> is launched after termination.
+            </p>
+            <div class="note">
+              Specify addPersistentEventListener et al.
+            </div>
+          </section>
+      </section>
+    </section>
+    <section class="appendix">
+      <h2>
+        Acknowledgments
+      </h2>
+      <p>
+        Some use cases are derived from Adam Barth’s execution model
+        proposal referenced in the
+        <a href="http://www.w3.org/2012/09/sysapps-wg-charter.html">
+        System Applications Working Group Charter</a>. Thanks to the
+        Chrome team for their experiments with Packaged Apps.
+      </p>
+    </section>
+  </body>
+</html>

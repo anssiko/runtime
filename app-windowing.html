@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>
+      Application Windowing
+    </title>
+    <script src="http://www.w3.org/Tools/respec/respec-w3c-common" class=
+    "remove">
+</script>
+    <script class='remove'>
+var respecConfig = {
+        specStatus:           "ED",
+        shortName:            "app-windowing",
+
+        //publishDate:  "2012-12-12",
+        //previousPublishDate:  "2013-03-21",
+        previousMaturity:     "ED",
+        edDraftURI:           "http://www.w3.org/2012/sysapps/runtime/app-windowing.html",
+        // lcEnd: "3000-01-01",
+        // crEnd: "3000-01-01",
+
+        editors: [
+            {
+              name: "Anssi Kostiainen",
+              company: "Intel",
+              companyURL: "http://intel.com/"
+            },
+            {
+              name: "Kenneth Rohde Christiansen",
+              company: "Intel",
+              companyURL: "http://intel.com/"
+            },
+        ],
+
+        inlineCSS:     true,
+        noIDLIn:       true,
+        noLegacyStyle: true,
+        extraCSS:      ["../ReSpec.js/css/respec.css"],
+
+        wg:           "System Applications Working Group",
+        wgURI:        "http://www.w3.org/2012/sysapps/",
+        wgPublicList: "public-sysapps",
+        wgPatentURI:  "http://www.w3.org/2004/01/pp-impl/58119/status",
+        subtitle:     "A Runtime and Security Model Extension Specification" 
+      };
+    </script>
+    <style>
+.todo { display: none; }
+    </style>
+  </head>
+  <body>
+    <section id='abstract'>
+      This specification defines an API for creating windows from within
+      the <a href="app-lifecycle.html#main-document">main document</a> of an application.
+    </section>
+    <section class="informative">
+      <h2>
+        Introduction
+      </h2>
+      <p>
+        Currently window creation (and to some extend also cross-window
+        communication) on the web platform works using <code>window.open()</code>
+        are follows:
+      </p>
+      <ul>
+        <li>
+          <code>window.open()</code> synchronously returns a reference to
+          the newly created window.
+        </li>
+        <li>
+          <code>window.opener</code> returns a reference to the window
+          that opened the window (i.e. the application main document).
+        </li>
+      </ul>
+      <div class="note">
+         See also
+         <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=22628">
+         Bug 22628 - Define broadcast to same-origin globals API (HTML WG)</a> and 
+         <a href="http://wiki.whatwg.org/wiki/RemoteDocumentMessaging">
+         RemoteDocumentMessaging (WHATWG)</a>
+      </div>
+      <p>
+        However, <code>window.open()</code> does not address the following
+        requirements (for related use cases, refer to the <a href="app-lifecycle.html">
+        Application Lifecycle and Events</a> specification):
+      </p>
+      <ul>
+        <li>
+          An application must be able to create a window that is
+          initially hidden.
+        </li>
+        <li>
+          An application must be able to create a new window that
+          does not block the main thread of the application, i.e.
+          the API for creating a new window must be asynchronous.
+        </li>
+        <li>
+          The runtime must be able to stack modal windows, relevant
+          in both mobile and especially desktop context. If windows
+          are stacked modally, multiple windows must not be shown
+          in the task switcher.
+        </li>
+        <li>
+          An application should be able to ask another application
+          to create a window and be able to integrate the newly
+          created window in its modal window stack hierarchy.
+        </li>
+      </ul>
+      <p>
+        This specification defines an API for creating windows that
+        addresses the requirements.
+      </p>
+    </section>
+    <section id="conformance">
+      <p>
+        There is only one class of product that can claim conformance to this
+        specification: a <dfn>user agent</dfn>.
+      </p>
+      <p>
+        The IDL fragments in this specification must be interpreted as required
+        for conforming IDL fragments, as described in the Web IDL
+        specification. [[!WEBIDL]].
+      </p>
+    </section>
+    <!--
+    <section>
+      <h2>
+        Terminology
+      </h2>
+      <p>
+        The concepts <dfn><a href="http://dev.w3.org/html5/spec/webappapis.html#queue-a-task">
+        queue a task</a></dfn> and
+        <dfn><a href="http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">
+        fire a simple event</a></dfn> are defined in [[!HTML5]].
+      </p>
+      <p>
+        The terms <dfn><a href=
+        "http://dev.w3.org/html5/spec/webappapis.html#event-handlers">event
+        handlers</a></dfn> and <dfn><a href=
+        "http://dev.w3.org/html5/spec/webappapis.html#event-handler-event-type">
+        event handler event types</a></dfn> are defined in [[!HTML5]].
+      </p>
+    </section>
+    -->
+    <section>
+      <h2>
+        Application Windowing Extensions
+      </h2>
+      <section>
+        <h2>
+          Extension to the <a>ApplicationRuntime</a> interface
+        </h2>
+        <section>
+          <p>
+            An <a>ApplicationRuntime</a> is defined in the
+            <a href="app-lifecycle.html">Application Lifecycle and Events</a>
+            specification.
+          </p>
+        </section>
+      </section>
+      <section>
+        <h2>
+          APIs for Creating Application Windows
+        </h2>
+        <section>
+          <dl title='partial interface ApplicationWindow' class='idl'>
+            <dt>
+              attribute WindowProxy contentWindow
+            </dt>
+            <dd>
+            </dd>
+            <dt>
+              void show()
+            </dt>
+            <dd>
+            </dd>
+            <dt>
+              void hide()
+            </dt>
+            <dd>
+            </dd>
+          </dl>
+          <dl title='partial interface ApplicationRuntime' class='idl'
+              data-merge='CreateWindowRejectCallback CreateWindowResolveCallback WindowOptions'>
+            <dt>
+              Promise createWindow(optional DOMString url = "about:blank", optional WindowOptions options)
+            </dt>
+            <dd>
+            </dd>
+          </dl>
+
+          
+          <dl id='cb-CreateWindowResolveCallback' class='idl' title='callback CreateWindowResolveCallback = void'>
+            <dt>
+              ApplicationWindow appWindow
+            </dt>
+            <dd>
+            </dd>
+          </dl>
+          <dl id='cb-CreateWindowRejectCallback' class='idl' title='callback CreateWindowRejectCallback = void (DOMError error)'>
+            <dt>
+              DOMError error
+            </dt>
+            <dd>
+            </dd>
+          </dl>          
+          <dl title="dictionary WindowOptions" class='idl'>
+            <dt>
+              boolean hidden = false
+            </dt>
+            <dd></dd>
+            <dt>
+              double min
+            </dt>
+            <dd></dd>
+            <dt>
+              double max
+            </dt>
+            <dd></dd>
+          </dl>
+          <div class="note">
+            The algorithms go here. 
+          </div>
+        </section>
+      </section>
+    </section>
+    <section class="appendix">
+      <h2>
+        Acknowledgments
+      </h2>
+      <p>
+        Some use cases are derived from Adam Barth’s execution model
+        proposal referenced in the
+        <a href="http://www.w3.org/2012/09/sysapps-wg-charter.html">
+        System Applications Working Group Charter</a>. Thanks to the
+        Chrome team for their experiments with Packaged Apps.
+      </p>
+    </section>
+  </body>
+</html>
