@@ -120,26 +120,11 @@ var respecConfig = {
       <p>
         Alternatively, if the author wants to show the window only when all
         content and referenced resources have been loaded, it is possible to
-        initially hide the constructed window and listen to the
-        <code>load</code> event on the newly constructed window. In
-        this example a <code>ready()</code> function is created, that
-        returns a <code>Promise</code> [[!DOM]] responsible for listening
-        to the document readiness of the constructed window.
+        initially hide the constructed window and inspect the document 
+        readyness on the newly constructed window.
       </p>
       <pre class="example highlight">
         &lt;script&gt;
-        function ready(document) { 
-          return new Promise(function(resolver) {
-            if (document.readyState == "complete") {
-              resolver.resolve();
-            } else {
-              document.onload = function() {
-                if (document.readyState == "complete") resolver.resolve();
-              };
-            }
-          });
-        }
-
         runtime.onlaunch = function() {
           // Create an initially hidden window for a given url.
           var options = { hidden: true };
@@ -149,9 +134,13 @@ var respecConfig = {
               contentDocument = created_window.contentWindow.document;
 
               // Show the window when all content has loaded, incl. images.
-              ready(contentDocument).fulfill(
-                function() { created_window.show(); }
-              );
+              if (contentDocument.readyState == "complete") {
+                create_window.show();
+              } else {
+                contentDocument.onreadystatechange = function() {
+                  if (contentDocument.readyState == "complete") created_window.show();
+                };
+              }
             }
           );
         };
