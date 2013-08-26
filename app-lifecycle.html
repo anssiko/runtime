@@ -142,8 +142,8 @@ var respecConfig = {
 
         runtime.onlaunch = function() {
           // Create an initially hidden window for a given url.
-          runtime.<a href="app-windowing.html#idl-def-ApplicationRuntime">createWindow</a>('main_ui.html', { hidden: true })
-            .fulfill(function(created_window) {
+          var options = { hidden: true };
+          runtime.<a href="app-windowing.html#idl-def-ApplicationRuntime">createWindow</a>('main_ui.html', options).fulfill(function(created_window) {
 
               // Get the document for the window resource.
               contentDocument = created_window.contentWindow.document;
