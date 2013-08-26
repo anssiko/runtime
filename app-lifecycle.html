@@ -348,12 +348,12 @@ var respecConfig = {
         </p>
         <p>
           Before actual termination, the <code>terminate</code> event 
-          is sent, giving the application has the ability to clear up,
+          is sent, giving the application the ability to clear up,
           store state and close windows. In case that the applications 
           does not terminate within a given time, the runtime may
           consider the application as too slow or hanging and has the
           ability to terminate it immediately (forced termination).
-          It is recommended that applications automatically saves their
+          It is recommended that applications automatically save  their
           state periodically to protect against data loss, in such a case.
         </p>
         <p>
@@ -762,7 +762,7 @@ var respecConfig = {
               Spin the event loop for a user-agent-defined amount of time
               <div class="note">
                 This is intended to allow the application to run scripts to
-                persist state, do clean up tasks before being terminated).
+                persist state, do clean up tasks before being terminated.
               </div>
             </li>
             <li>
