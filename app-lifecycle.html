@@ -240,7 +240,8 @@ var respecConfig = {
         <div class="note">
           Do we want to support authoring the main document in HTML with
           JavaScript? Potential use cases: re-use of existing developer
-          tools for authoring, easier debugging.
+          tools for authoring, easier debugging. Pure JavaScript would
+          be aligned with the Worker model.
         </div>
         <p>
           In the following example, instead of loading an HTML page, an
@@ -298,10 +299,7 @@ var respecConfig = {
             install time or at runtime. 
           </p>
           <p>
-            The runtime should not indicate that applications without
-            windows associated, often known as background services, are
-            running in, meaning that the application should not appear
-            in any system-wide task switcher.
+            The application should not appear in any system-wide task switcher.
           </p>
           <div class="note">
             Should it be an implementation detail whether background
