@@ -130,9 +130,13 @@ var respecConfig = {
         &lt;script&gt;
         function ready(document) { 
           return new Promise(function(resolver) {
-            document.onload = function() {
-              if (document.readyState == "complete") resolver.resolve();
-            };
+            if (document.readyState == "complete") {
+              resolver.resolve();
+            } else {
+              document.onload = function() {
+                if (document.readyState == "complete") resolver.resolve();
+              };
+            }
           });
         }
 
