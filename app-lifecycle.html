@@ -241,7 +241,11 @@ var respecConfig = {
           Do we want to support authoring the main document in HTML with
           JavaScript? Potential use cases: re-use of existing developer
           tools for authoring, easier debugging. Pure JavaScript would
-          be aligned with the Worker model.
+          be aligned with the Worker model and the way how browser extensions
+          are typically authored. If the main document is pure
+          JavaScript it is hidden by default. But if it is HTML should it be
+          visible by default to make the common use case of showing HTML
+          simple?
         </div>
         <p>
           In the following example, instead of loading an HTML page, an
