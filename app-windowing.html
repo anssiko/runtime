@@ -166,7 +166,7 @@ var respecConfig = {
         <section>
           <dl title='partial interface ApplicationWindow' class='idl'>
             <dt>
-              attribute WindowProxy contentWindow
+              readonly attribute WindowProxy contentWindow
             </dt>
             <dd>
             </dd>
@@ -181,6 +181,22 @@ var respecConfig = {
             <dd>
             </dd>
           </dl>
+          <p>
+            The <code><a>contentWindow</a></code> IDL attribute must return the
+            <code>WindowProxy</code> object of the created window.
+          </p>
+          <p>
+            When the <code>show()</code> method is invoked, the user agent must run the following steps:
+          </p>
+          <ol>
+            <li>...</li>
+          </ol>
+          <p>
+            When the <code>hide()</code> method is invoked, the user agent must run the following steps:
+          </p>
+          <ol>
+            <li>...</li>
+          </ol>
           <dl title='partial interface ApplicationRuntime' class='idl'
               data-merge='CreateWindowRejectCallback CreateWindowResolveCallback WindowOptions'>
             <dt>
