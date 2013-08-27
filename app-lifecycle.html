@@ -882,7 +882,10 @@ var respecConfig = {
           event is required which can wake up an application as a result.
         </p>
         <div class="note">
-          Applications are required to resubscribe to events when launched.
+          Applications are required to resubscribe to events when launched,
+          or alternatively, the data of the persistent event could be passed
+          in a <code><a>LaunchEvent</a></code> as extra argument(s) when
+          the <a>application is launched</a>? This needs to be clarified.
         </div>
         <p>
           To prevent application from being woken up for no reason,
@@ -955,7 +958,7 @@ var respecConfig = {
               only get triggered when the system device is being connected to
               AC power.
               <pre class="example highlight">
-                navigation.oncommitted.addPersistentEventListener(
+                navigation.onconnectionchanged.addPersistentEventListener(
                   { url: [{hostSuffix: 'example.com'}, {hostSuffix: 'example.org'}] },
                   function(e) {
                     // ...
