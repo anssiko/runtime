@@ -81,10 +81,10 @@ var respecConfig = {
       <ul>
         <li>
           Changes in the application lifecycle such as launch and terminate
-          (<a>application events</a>)
+          (<a href="#application-events">application events</a>)
         </li>
         <li>
-          Events sent by the system (<a>persistent events</a>)
+          Events sent by the system (<a href="#persistent-events">persistent events</a>)
         </li>
         <li>
           Scheduled wakeup calls
@@ -546,6 +546,111 @@ var respecConfig = {
           <a>main document</a> can listen to the events defined below.
         </p>
       </section>
+      <section>
+        <h2>Persistent Events</h2>
+        <p>
+          A <dfn>persistent event</dfn> is an event that persists over
+          the lifetime of an application. These events do not originate
+          from the DOM itself and thus live outside of the document
+          lifetime. As applications can be terminated, a new type of
+          event is required which can wake up an application as a result.
+        </p>
+        <div class="note">
+          Applications are required to resubscribe to events when launched,
+          or alternatively, the data of the persistent event could be passed
+          in a <code><a>LaunchEvent</a></code> as extra argument(s) when
+          the <a>application is launched</a>? This needs to be clarified.
+        </div>
+        <p>
+          To prevent application from being woken up for no reason,
+          filtering must happen in the runtime and not in an application.
+        </p>
+        <p>
+          Persistent events are similar to regular events, but outlive
+          the lifetime of the document. Each event can have its own
+          filtering system defined, allowing the runtime to only wake
+          up applications for events the applications is interested
+          in and given the filter rules defined.
+        </p>
+        <p>
+          Subscribing to the imaginable <code>onconnectionchanged</code>
+          persistent event, filtering to only get triggered when the
+          system device is being connected to AC power.
+        </p>
+        <pre class="example highlight">
+          power.onconnectionchanged.addPersistentEventListener({"connectionType": "ac-power"},
+            function() {
+               // Change battery icon.
+            }
+          );
+        </pre>
+        <p>
+          Persistent events are not meant for any event types depending
+          on document state given that the document might be unloaded
+          and it is also not meant for cross document communication,
+          for which Shared Workers can be used.
+        </p>
+        <p>
+          Not all events (defined in [[!HTML5]]) depend on document state
+          or interaction with the document. For example, the browser
+          orientation or device motion are defined in their own specifications.
+          The persistent events are not meant for this type of events
+          that either require a visible window or are intended to be fired 
+          frequently.
+        </p>
+        <p>
+          Instead, persistent events are applicable to event types that fire
+          at low frequency and support filtering.
+        </p>
+        <p>
+          When an application subscribes to an event, it will be subscribed
+          to it until the application unsubscribes, is uninstalled, updated
+          or relaunched. On relaunch or update it is thus the responsibility
+          of the application responsibility to re-subscribe to the event;
+          if not the context will not know what to call.
+        </p>
+        <p>
+          When an application is launched as a result of a persistent event,
+          firstly its <a>main document</a> is loaded, then the
+          <code>launch</code> event is dispatched, and immediately after
+          the <code>launch</code> event, the persistent event handler is
+          called. If the application did not register the listener as part
+          of the launch event, nothing happens.
+        </p>
+          <section>
+            <h3>Filtered Events</h3>
+            <p>
+              Filtered events are a mechanism that allows listeners to
+              specify a subset of events that they are interested in.
+              A listener that makes use of a filter is not invoked for
+              events that do not pass the filter, which makes the listening
+              code more declarative and efficient.
+            </p>
+            <p>
+              Subscribing to the imaginable <code>connectionchanged</code>
+              (refer to the previous example) persistent event, filtering to
+              only get triggered when the system device is being connected to
+              AC power.
+              <pre class="example highlight">
+                navigation.onconnectionchanged.addPersistentEventListener(
+                  { url: [{hostSuffix: 'example.com'}, {hostSuffix: 'example.org'}] },
+                  function(e) {
+                    // ...
+                  });
+              </pre>
+          </section>
+          <section>
+            <h3>Event Registration</h3>
+            <p>
+              The listeners only exist in the context of the <a>main document</a>.
+              <code>addPersistentEventListener</code> must be called each time the
+              <a>main document</a> is launched after termination.
+            </p>
+            <div class="note">
+              Specify addPersistentEventListener et al.
+            </div>
+          </section>
+      </section>
     </section>
     <section>
       <h2>
@@ -875,111 +980,6 @@ var respecConfig = {
             </tbody>
           </table>
         </section>
-      </section>
-      <section>
-        <h2>Persistent Events</h2>
-        <p>
-          A <dfn>persistent event</dfn> is an event that persists over
-          the lifetime of an application. These events do not originate
-          from the DOM itself and thus live outside of the document
-          lifetime. As applications can be terminated, a new type of
-          event is required which can wake up an application as a result.
-        </p>
-        <div class="note">
-          Applications are required to resubscribe to events when launched,
-          or alternatively, the data of the persistent event could be passed
-          in a <code><a>LaunchEvent</a></code> as extra argument(s) when
-          the <a>application is launched</a>? This needs to be clarified.
-        </div>
-        <p>
-          To prevent application from being woken up for no reason,
-          filtering must happen in the runtime and not in an application.
-        </p>
-        <p>
-          Persistent events are similar to regular events, but outlive
-          the lifetime of the document. Each event can have its own
-          filtering system defined, allowing the runtime to only wake
-          up applications for events the applications is interested
-          in and given the filter rules defined.
-        </p>
-        <p>
-          Subscribing to the imaginable <code>onconnectionchanged</code>
-          persistent event, filtering to only get triggered when the
-          system device is being connected to AC power.
-        </p>
-        <pre class="example highlight">
-          power.onconnectionchanged.addPersistentEventListener({"connectionType": "ac-power"},
-            function() {
-               // Change battery icon.
-            }
-          );
-        </pre>
-        <p>
-          Persistent events are not meant for any event types depending
-          on document state given that the document might be unloaded
-          and it is also not meant for cross document communication,
-          for which Shared Workers can be used.
-        </p>
-        <p>
-          Not all events (defined in [[!HTML5]]) depend on document state
-          or interaction with the document. For example, the browser
-          orientation or device motion are defined in their own specifications.
-          The persistent events are not meant for this type of events
-          that either require a visible window or are intended to be fired 
-          frequently.
-        </p>
-        <p>
-          Instead, persistent events are applicable to event types that fire
-          at low frequency and support filtering.
-        </p>
-        <p>
-          When an application subscribes to an event, it will be subscribed
-          to it until the application unsubscribes, is uninstalled, updated
-          or relaunched. On relaunch or update it is thus the responsibility
-          of the application responsibility to re-subscribe to the event;
-          if not the context will not know what to call.
-        </p>
-        <p>
-          When an application is launched as a result of a persistent event,
-          firstly its <a>main document</a> is loaded, then the
-          <code>launch</code> event is dispatched, and immediately after
-          the <code>launch</code> event, the persistent event handler is
-          called. If the application did not register the listener as part
-          of the launch event, nothing happens.
-        </p>
-          <section>
-            <h3>Filtered Events</h3>
-            <p>
-              Filtered events are a mechanism that allows listeners to
-              specify a subset of events that they are interested in.
-              A listener that makes use of a filter is not invoked for
-              events that do not pass the filter, which makes the listening
-              code more declarative and efficient.
-            </p>
-            <p>
-              Subscribing to the imaginable <code>connectionchanged</code>
-              (refer to the previous example) persistent event, filtering to
-              only get triggered when the system device is being connected to
-              AC power.
-              <pre class="example highlight">
-                navigation.onconnectionchanged.addPersistentEventListener(
-                  { url: [{hostSuffix: 'example.com'}, {hostSuffix: 'example.org'}] },
-                  function(e) {
-                    // ...
-                  });
-              </pre>
-          </section>
-          <section>
-            <h3>Event Registration</h3>
-            <p>
-              The listeners only exist in the context of the <a>main document</a>.
-              <code>addPersistentEventListener</code> must be called each time the
-              <a>main document</a> is launched after termination.
-            </p>
-            <div class="note">
-              Specify addPersistentEventListener et al.
-            </div>
-          </section>
       </section>
     </section>
     <section class="appendix">
