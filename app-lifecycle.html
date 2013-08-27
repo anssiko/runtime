@@ -109,10 +109,11 @@ var respecConfig = {
         &lt;script&gt;
         runtime.onlaunch = function() {
           // Create a window for a given url.
-          runtime.<a href="app-windowing.html#idl-def-ApplicationRuntime">createWindow</a>('main_ui.html').fulfill(function(created_window) {
+          runtime.<a href="app-windowing.html#idl-def-ApplicationRuntime">createWindow</a>('main_ui.html').fulfill(function(win) {
             // Get the document for the window resource.
-            var contentDocument = created_window.contentWindow.document;
-            contentDocument.baz = 'Hello from app';
+            var doc = win.contentWindow.document;
+            // Set the baz variable on the document associated with the created window resource.
+            doc.baz = 'Hello from app';
           });
         };
         &lt;/script&gt;
@@ -128,17 +129,17 @@ var respecConfig = {
         runtime.onlaunch = function() {
           // Create an initially hidden window for a given url.
           var options = { hidden: true };
-          runtime.<a href="app-windowing.html#idl-def-ApplicationRuntime">createWindow</a>('main_ui.html', options).fulfill(function(created_window) {
+          runtime.<a href="app-windowing.html#idl-def-ApplicationRuntime">createWindow</a>('main_ui.html', options).fulfill(function(win) {
 
               // Get the document for the window resource.
-              contentDocument = created_window.contentWindow.document;
+              var doc = win.contentWindow.document;
 
               // Show the window when all content has loaded, incl. images.
-              if (contentDocument.readyState == "complete") {
-                create_window.show();
+              if (doc.readyState == "complete") {
+                win.show();
               } else {
-                contentDocument.onreadystatechange = function() {
-                  if (contentDocument.readyState == "complete") created_window.show();
+                doc.onreadystatechange = function() {
+                  if (doc.readyState == "complete") win.show();
                 };
               }
             }
