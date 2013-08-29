@@ -439,7 +439,17 @@ var respecConfig = {
           </li>
           <li>
             The runtime must provide a mechanism to prevent an
-            application from being launched unneededly.
+            application from being launched unnecessarily.
+            <ul>
+              <li>
+                As the persistent events can result in launching dormant
+                apps, it is important that that only happens for subscribed
+                events and it should support some kind of prefiltering,
+                such that if the app listens to say a usb-plugged signal,
+                it can define to only listen to a specific device
+                connected or a specific port.
+              </li>
+            </ul>
           </li>
           <li>
             The runtime must provide a one entry point for window
@@ -458,14 +468,6 @@ var respecConfig = {
                 is not needed to be part of the manifest.
               </li>
             </ul>
-          </li>
-          <li>
-            As the persistent events can result in launching dormant
-            apps, it is important that that only happens for subscribed
-            events and it should support some kind of prefiltering,
-            such that if the app listens to say a usb-plugged signal,
-            it can define to only listen to a specific device
-            connected or a specific port.
           </li>
         </ol>
       </section>
