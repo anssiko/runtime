@@ -524,10 +524,13 @@ var respecConfig = {
           the terminatecanceled event will be fired successively and
           the main document will stay active until considered idle again.
         </p>
-        <div class="note">
-          Need a mechanish for passing data to the <a>main document</a> from
-          the <a>application</a> that launched it. Does Web Activities address
-          the use case?
+        <div class="issue">
+          Need a mechanism for passing data to the <a>main document</a> from
+          the <a>application</a> that launched it. Does Web Activities/Intents
+          address the use case (in scope for
+          <a href="http://www.w3.org/2009/dap/#webintents">Web Intents Task
+          Force</a>), or should we e.g. pass such data in
+          <code>LaunchEvent</code>?
         </div>
         <p>
           When the <a>application</a> is launched, the launch event is fired
