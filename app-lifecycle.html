@@ -143,6 +143,23 @@ var respecConfig = {
         };
         &lt;/script&gt;        
       </pre>
+      <div class="issue">
+        Simplify the above example for better ergonomics. Is there a way to avoid
+        needing two branches, e.g. could we invoke fulfill callback only after
+        the <code>readyState</code> is set to <code>complete</code>
+        (this needs to be specified)?
+        <pre class="example highlight">
+        &lt;script&gt;
+        runtime.onlaunch = function() {
+          var options = { hidden: true };
+          runtime.<a href="app-windowing.html#idl-def-ApplicationRuntime">createWindow</a>('main_ui.html', options).fulfill(function(win) {
+              win.contentWindow.document.body.innerHTML = "Hello World!";
+              win.show();
+          );
+        };
+        &lt;/script&gt;        
+        </pre>
+      </div>
     </section>
     <section id="conformance">
       <p>
