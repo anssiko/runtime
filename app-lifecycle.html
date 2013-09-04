@@ -53,14 +53,14 @@ var respecConfig = {
     <section id='abstract'>
       This specification describes a new <a>JavaScript global environment</a>,
       the <a>main environment</a>, and defines APIs for managing the lifecycle
-      of an application and associated events exposed to this environment.
+      of an <a>application</a> and associated events exposed to this environment.
     </section>
     <section class="informative">
       <h2>
         Introduction
       </h2>
       <p>
-        An application consists of a main entrance, which is a non-visible
+        An <a>application</a> consists of a main entrance, which is a non-visible
         document whose purpose is to handle the application lifecycle. This
         special-purpose document, referred to as the <a>main document</a>, has the
         ability to react to persistent events, schedule tasks as well as
@@ -68,12 +68,7 @@ var respecConfig = {
         as well as background services.
       </p>
       <p>
-        The application in the context of this specification is defined as
-        a packaged or hosted web application that has referenced the main
-        document in its manifest [SYSAPPS-MANIFEST].
-      </p>
-      <p>
-        Using the APIs defined in this specification, an application is
+        Using the APIs defined in this specification, an <a>application</a> is
         able to run its application logic in the main document independently
         of any user interface scripts and react to:
       </p>
@@ -185,7 +180,16 @@ var respecConfig = {
       </p>
       <p>
         The terms <dfn>main environment</dfn> and <dfn>main document</dfn>
-        refer to the main entry point of the application to the system.
+        refer to the main entry point of the <a>application</a> to the system.
+      </p>
+      <p>
+        The term <dfn>application</dfn> in the context of this specification
+        refers to a
+        <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#terminology">document</a>
+        that references a valid <a>main document</a> in its manifest
+        [SYSAPPS-MANIFEST]. This includes "mere web pages", as well
+        as packaged and hosted web applications, that meet the above
+        requirement.
       </p>
       <p>
         The <dfn><a href=
@@ -224,14 +228,14 @@ var respecConfig = {
         </h2>
         <p>
           The <a>main document</a> is used as the main entry point of the
-          application to the system. When loading the <a>main document</a>,
-          the runtime must not display it to the user. If the application
+          <a>application</a> to the system. When loading the <a>main document</a>,
+          the runtime must not display it to the user. If the <a>application</a>
           intents to show any user interface it has to create
           windows or interact with the platform in other ways such as by
           using a notification system.
         </p>
         <p>
-          There must be exactly one <a>main document</a> per application that can
+          There must be exactly one <a>main document</a> per <a>application</a> that can
           be authored in pure JavaScript or, as usual, in HTML with JavaScript either
           embedded inline or imported from an external file using the script
           element. If pure JavaScript is used, an empty document should be
@@ -259,19 +263,19 @@ var respecConfig = {
         </pre>
         <p>
           The runtime may unload the <a>main document</a> in certain circumstances,
-          which results in termination of the application. When the
+          which results in termination of the <a>application</a>. When the
           <a>main document</a> is not executing any script, has no pending
           callbacks, and no open windows, the runtime can decide to unload the
           <a>main document</a>. In addition, the runtime may unload the <a>main
           document</a> in order to reduce resource consumption.
           For example, after loading the <a>main document</a> and no window is
-          visible, the application can be terminated by the runtime.
+          visible, the <a>application</a> can be terminated by the runtime.
         </p>
         <p>
-          The runtime must prevent an application from interfering
-          with the application's termination, e.g. event listeners or long-running
+          The runtime must prevent an <a>application</a> from interfering
+          with the <a>application</a>'s termination, e.g. event listeners or long-running
           scripts using APIs such as Geolocation, setTimeout, XMLHttpRequest should
-          not block the runtime from terminating the application.
+          not block the runtime from terminating the <a>application</a>.
         </p>
       </section>
       <section>
@@ -280,30 +284,30 @@ var respecConfig = {
         </h2>
         <p>
           The runtime does not create any visible windows by itself when
-          launching an application. This is up to the application and
+          launching an <a>application</a>. This is up to the <a>application</a> and
           should be handled as part of the <code>launch</code> event.
-          When launched, the application will know the reason for the
+          When launched, the <a>application</a> will know the reason for the
           launch. The reason could be a scheduled wake up, a persistent
           event of interest or a direct launch either by the system,
-          other applications or user initiated. This allows the
-          application to act differently depending on the reason.
+          another <a>application</a>, or initiated by the user. This allows the
+          <a>application</a> to act differently depending on the reason.
         </p>
         <section>
           <h3>Persistent Event-initiated Launch</h3>
           <p>
-            The runtime may start the application for the purpose of
+            The runtime may start the <a>application</a> for the purpose of
             delivering events from the system. For example, a system-level
             service might ask an email application to send an email on its
             behalf. To handle these cases, the runtime must launch the
-            application in the background. The application must be listening
+            <a>application</a> in the background. The <a>application</a> must be listening
             to persistent events in order to be launched in response to them. 
           </p>
           <p>
-            An application may subscribe to persistent events either at
+            An <a>application</a> may subscribe to persistent events either at
             install time or at runtime. 
           </p>
           <p>
-            The application should not appear in any system-wide task switcher.
+            The <a>application</a> should not appear in any system-wide task switcher.
           </p>
           <div class="note">
             Should it be an implementation detail whether background
@@ -313,17 +317,17 @@ var respecConfig = {
         <section>
           <h3>Wakeup-initiated Launch</h3>
           <p>
-            An application can schedule itself for wake-up by scheduling
+            An <a>application</a> can schedule itself for wake-up by scheduling
             a task according to the Application Task Scheduling
             [SYSAPPS-TASK-SCHED]. On the contrary to setTimeout which will
-            not be called when the application has been terminated, the
-            tasks will ensure that the application is running and that
+            not be called when the <a>application</a> has been terminated, the
+            tasks will ensure that the <a>application</a> is running and that
             the launch event has been fired on the main document before
             resolving the Promise associated with the task.
           </p>
           <p>
             In the the following example, a "Still awake?..." message is
-            sent to the application in 10 minutes, and the application
+            sent to the <a>application</a> in 10 minutes, and the <a>application</a>
             woken up if it is not running.
           </p>
           <pre class="example highlight">
@@ -334,7 +338,7 @@ var respecConfig = {
           </pre>
           <p>
             Note that in order to run the tasks at the scheduled time,
-            the application should be started a bit earlier.
+            the <a>application</a> should be started a bit earlier.
           </p>
         </section>
       </section>
@@ -343,17 +347,17 @@ var respecConfig = {
           Termination Sequence
         </h2>
         <p>
-          The runtime may terminate the application if it becomes idle
+          The runtime may terminate the <a>application</a> if it becomes idle
           or in case or resource constraints.
         </p>
         <p>
           Before actual termination, the <code>terminate</code> event 
-          is sent, giving the application the ability to clear up,
-          store state and close windows. In case that the applications 
+          is sent, giving the <a>application</a> the ability to clear up,
+          store state and close windows. In case that the <a>application</a> 
           does not terminate within a given time, the runtime may
-          consider the application as too slow or hanging and has the
+          consider the <a>application</a> as too slow or hanging and has the
           ability to terminate it immediately (forced termination).
-          It is recommended that applications automatically save  their
+          It is recommended the <a>application</a> automatically saves its
           state periodically to protect against data loss, in such a case.
         </p>
         <p>
@@ -364,7 +368,7 @@ var respecConfig = {
           unloads is up to the implementation.
         </p>
         <p>
-          There is an exception as the application can receive a wakeup
+          There is an exception as the <a>application</a> can receive a wakeup
           or a persistent event while processing the terminate event.
           If this is the case, the terminate event is followed by a
           <code>terminatecanceled</code> event, as actual termination
@@ -372,8 +376,8 @@ var respecConfig = {
         </p>
         <p>
           The runtime should avoid terminating an active, focused
-          application if at all possible. However, the runtime may
-          terminate that application as a last resort (e.g., due to
+          <a>application</a> if at all possible. However, the runtime may
+          terminate that <a>application</a> as a last resort (e.g., due to
           resource exhaustion or bad behavior).
         </p>
       </section>
@@ -402,43 +406,45 @@ var respecConfig = {
         </p>
         <ol>
           <li>
-            An application (e.g. a background service) must be able
+            An <a>application</a> (e.g. a background service) must be able
             to run without visible user interface.
           </li>
           <li>
-            An application must be able to decide when to show the
+            An <a>application</a> must be able to decide when to show the
             user interface, if at all. It should be up to the
             application developer to decide when it is appropriate
             to show the user interface.
           </li>
           <li>
-            An application must be able to show the user interface
+            An <a>application</a> must be able to show the user interface
             only after it is fully constructed and all the needed
             data has been loaded.
           </li>
           <li>
-            The runtime model must support authoring an application
+            The runtime model must support authoring an <a>application</a>
             (or a service without user interface) that can be
             terminated without user’s consent, and that is able to
             restore to its previous state.
           </li>
           <li>
-            After being launched, an application must be able to
+            After being launched, an <a>application</a> must be able to
             execute scripts to recreate its state before recreating
             the actual user interface.
           </li>
           <li>
-            An application must be able to show a different user
+            An <a>application</a> must be able to show a different user
             interface given how the app was launched.
             <ul>
               <li>
-                For example, if launched as a photo picker should not show the default application window, but instead create a special purpose user interface.
+                For example, if launched as a photo picker should not
+                show the default application window, but instead create
+                a special purpose user interface.
               </li>
             </ul>
           </li>
           <li>
             The runtime must provide a mechanism to prevent an
-            application from being launched unnecessarily.
+            <a>application</a> from being launched unnecessarily.
             <ul>
               <li>
                 As the persistent events can result in launching dormant
@@ -456,7 +462,7 @@ var respecConfig = {
             <a href="https://github.com/sysapps/runtime/issues/100">#100</a>).
           </li>
           <li>
-            The application must be able to create a window and
+            The <a>application</a> must be able to create a window and
             have it laid out correctly with the right dimensions
             before being shown.
             <ul>
@@ -476,7 +482,7 @@ var respecConfig = {
       <section>
         <h3>Main Document</h3>
         <p>
-          There is only one <dfn>main document</dfn> per application.
+          There is only one <dfn>main document</dfn> per <a>application</a>.
         </p>
         <div class="note">
           Define the main document, and explain relationship between the
@@ -507,28 +513,28 @@ var respecConfig = {
         <h3>Application Events</h3>
         <p>
           The runtime context associated with the main document can
-          be launched and terminated either by the user, other
-          applications or by the system. The system can decide to
-          terminate an application as long as it is considered
+          be launched and terminated either by the user, another
+          <a>application</a>, or by the system. The system can decide to
+          terminate an <a>application</a> as long as it is considered
           idle (no visible views or connected message ports).
-          In the case the application received an event (or something
+          In the case the <a>application</a> received an event (or something
           similar, like a task was scheduled) while handling terminate,
           the terminatecanceled event will be fired successively and
           the main document will stay active until considered idle again.
         </p>
         <div class="note">
-          Need a mechanish for passing data to the main document from the
-          application that launched it. Does Web Activities address
+          Need a mechanish for passing data to the <a>main document</a> from
+          the <a>application</a> that launched it. Does Web Activities address
           the use case?
         </div>
         <p>
-          When the application is launched, the launch event is fired
+          When the <a>application</a> is launched, the launch event is fired
           with a reason which can be of type <code>pending-event</code>,
           <code>scheduled</code> or <code>other</code>. If the
-          application was launched in order to handle an event it
+          <a>application</a> was launched in order to handle an event it
           subscribed to or in response to a scheduled task, the type
           will be <code>pending-event</code> and <code>scheduled</code>
-          respectively. This allows for the application to avoid creating
+          respectively. This allows for the <a>application</a> to avoid creating
           any user interface not resulting from the respective event
           handling.
         </p>
@@ -537,14 +543,14 @@ var respecConfig = {
           by application developers.
         </div>
         <p>
-          In the case the user or another application started the 
-          application, the reason is set to <code>other</code>, allowing
+          In the case the user or another <a>application</a> started the 
+          <a>application</a>, the reason is set to <code>other</code>, allowing
           the main document to load the default user interface and
-          potentially a “screenshot” of the application while the
+          potentially a “screenshot” of the <a>application</a> while the
           main user interface is being built in the background.
         </p>
         <p>
-          For handling application lifecycle, an application
+          For handling application lifecycle, the <a>application</a>'s
           <a>main document</a> can listen to the events defined below.
         </p>
       </section>
@@ -552,27 +558,27 @@ var respecConfig = {
         <h2>Persistent Events</h2>
         <p>
           A <dfn>persistent event</dfn> is an event that persists over
-          the lifetime of an application. These events do not originate
+          the lifetime of an <a>application</a>. These events do not originate
           from the DOM itself and thus live outside of the document
-          lifetime. As applications can be terminated, a new type of
-          event is required which can wake up an application as a result.
+          lifetime. As the <a>application</a> can be terminated, a new type of
+          event is required which can wake up the <a>application</a> as a result.
         </p>
         <div class="note">
-          Applications are required to resubscribe to events when launched,
+          An <a>application</a> is required to resubscribe to events when launched,
           or alternatively, the data of the persistent event could be passed
           in a <code><a>LaunchEvent</a></code> as extra argument(s) when
           the <a>application is launched</a>? This needs to be clarified.
         </div>
         <p>
-          To prevent application from being woken up for no reason,
-          filtering must happen in the runtime and not in an application.
+          To prevent an <a>application</a> from being woken up for no reason,
+          filtering must happen in the runtime and not in an <a>application</a>.
         </p>
         <p>
           Persistent events are similar to regular events, but outlive
           the lifetime of the document. Each event can have its own
           filtering system defined, allowing the runtime to only wake
-          up applications for events the applications is interested
-          in and given the filter rules defined.
+          up an <a>application</a> for events it is interested in given
+          the filter rules defined.
         </p>
         <p>
           Subscribing to the imaginable <code>onconnectionchanged</code>
@@ -605,18 +611,18 @@ var respecConfig = {
           at low frequency and support filtering.
         </p>
         <p>
-          When an application subscribes to an event, it will be subscribed
-          to it until the application unsubscribes, is uninstalled, updated
+          When an <a>application</a> subscribes to an event, it will be subscribed
+          to it until the <a>application</a> unsubscribes, is uninstalled, updated
           or relaunched. On relaunch or update it is thus the responsibility
-          of the application responsibility to re-subscribe to the event;
+          of the <a>application</a> to re-subscribe to the event;
           if not the context will not know what to call.
         </p>
         <p>
-          When an application is launched as a result of a persistent event,
+          When an <a>application</a> is launched as a result of a persistent event,
           firstly its <a>main document</a> is loaded, then the
           <code>launch</code> event is dispatched, and immediately after
           the <code>launch</code> event, the persistent event handler is
-          called. If the application did not register the listener as part
+          called. If the <a>application</a> did not register the listener as part
           of the launch event, nothing happens.
         </p>
           <section>
@@ -822,7 +828,7 @@ var respecConfig = {
                   <code>pending-event</code>
                 </td>
                 <td>
-                  The application is launched in response to a persistent event it is listening to.
+                  The <a>application</a> is launched in response to a persistent event it is listening to.
                 </td>
                 <td>
                   Zero or more.
@@ -836,7 +842,7 @@ var respecConfig = {
                   <code>scheduled</code>
                 </td>
                 <td>
-                  The application is launched by the system at the scheduled time.
+                  The <a>application</a> is launched by the system at the scheduled time.
                 </td>
                 <td>
                   Zero or more.
@@ -877,7 +883,7 @@ var respecConfig = {
             <li>
               Spin the event loop for a user-agent-defined amount of time
               <div class="note">
-                This is intended to allow the application to run scripts to
+                This is intended to allow the <a>application</a> to run scripts to
                 persist state, do clean up tasks before being terminated.
               </div>
             </li>
