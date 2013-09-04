@@ -229,16 +229,16 @@ var respecConfig = {
         <p>
           The <a>main document</a> is used as the main entry point of the
           <a>application</a> to the system. When loading the <a>main document</a>,
-          the runtime must not display it to the user. If the <a>application</a>
+          the runtime does not display it to the user. If the <a>application</a>
           intents to show any user interface it has to create
           windows or interact with the platform in other ways such as by
           using a notification system.
         </p>
         <p>
-          There must be exactly one <a>main document</a> per <a>application</a> that can
+          There is exactly one <a>main document</a> per <a>application</a> that can
           be authored in pure JavaScript or, as usual, in HTML with JavaScript either
           embedded inline or imported from an external file using the script
-          element. If pure JavaScript is used, an empty document should be
+          element. If pure JavaScript is used, an empty document is
           created, including the associated scripts in their declared order.
         </p>
         <div class="note">
@@ -247,7 +247,7 @@ var respecConfig = {
           tools for authoring, easier debugging. Pure JavaScript would
           be aligned with the Worker model and the way how browser extensions
           are typically authored. If the main document is pure
-          JavaScript it is hidden by default. But if it is HTML should it be
+          JavaScript it is hidden by default. But if it is HTML make it be
           visible by default to make the common use case of showing HTML
           simple?
         </div>
@@ -262,19 +262,19 @@ var respecConfig = {
           }
         </pre>
         <p>
-          The runtime may unload the <a>main document</a> in certain circumstances,
+          The runtime unloads the <a>main document</a> in certain circumstances,
           which results in termination of the <a>application</a>. When the
           <a>main document</a> is not executing any script, has no pending
           callbacks, and no open windows, the runtime can decide to unload the
-          <a>main document</a>. In addition, the runtime may unload the <a>main
+          <a>main document</a>. In addition, the runtime unloads the <a>main
           document</a> in order to reduce resource consumption.
           For example, after loading the <a>main document</a> and no window is
           visible, the <a>application</a> can be terminated by the runtime.
         </p>
         <p>
-          The runtime must prevent an <a>application</a> from interfering
+          The runtime prevents an <a>application</a> from interfering
           with the <a>application</a>'s termination, e.g. event listeners or long-running
-          scripts using APIs such as Geolocation, setTimeout, XMLHttpRequest should
+          scripts using APIs such as Geolocation, setTimeout, XMLHttpRequest will
           not block the runtime from terminating the <a>application</a>.
         </p>
       </section>
@@ -284,8 +284,8 @@ var respecConfig = {
         </h2>
         <p>
           The runtime does not create any visible windows by itself when
-          launching an <a>application</a>. This is up to the <a>application</a> and
-          should be handled as part of the <code>launch</code> event.
+          launching an <a>application</a>. This is up to the <a>application</a>
+          and is handled as part of the <code>launch</code> event.
           When launched, the <a>application</a> will know the reason for the
           launch. The reason could be a scheduled wake up, a persistent
           event of interest or a direct launch either by the system,
@@ -295,22 +295,22 @@ var respecConfig = {
         <section>
           <h3>Persistent Event-initiated Launch</h3>
           <p>
-            The runtime may start the <a>application</a> for the purpose of
+            The runtime starts the <a>application</a> for the purpose of
             delivering events from the system. For example, a system-level
             service might ask an email application to send an email on its
-            behalf. To handle these cases, the runtime must launch the
-            <a>application</a> in the background. The <a>application</a> must be listening
+            behalf. To handle these cases, the runtime launches the
+            <a>application</a> in the background. The <a>application</a> will listen
             to persistent events in order to be launched in response to them. 
           </p>
           <p>
-            An <a>application</a> may subscribe to persistent events either at
+            An <a>application</a> subscribes to persistent events either at
             install time or at runtime. 
           </p>
           <p>
-            The <a>application</a> should not appear in any system-wide task switcher.
+            The <a>application</a> does not appear in any system-wide task switcher.
           </p>
           <div class="note">
-            Should it be an implementation detail whether background
+            Is it be an implementation detail whether background
             services are visible e.g. in a system monitor?
           </div>
         </section>
@@ -338,7 +338,7 @@ var respecConfig = {
           </pre>
           <p>
             Note that in order to run the tasks at the scheduled time,
-            the <a>application</a> should be started a bit earlier.
+            the <a>application</a> can be started a bit earlier.
           </p>
         </section>
       </section>
@@ -347,25 +347,25 @@ var respecConfig = {
           Termination Sequence
         </h2>
         <p>
-          The runtime may terminate the <a>application</a> if it becomes idle
+          The runtime terminates the <a>application</a> if it becomes idle
           or in case or resource constraints.
         </p>
         <p>
           Before actual termination, the <code>terminate</code> event 
           is sent, giving the <a>application</a> the ability to clear up,
           store state and close windows. In case that the <a>application</a> 
-          does not terminate within a given time, the runtime may
+          does not terminate within a given time, the runtime can
           consider the <a>application</a> as too slow or hanging and has the
           ability to terminate it immediately (forced termination).
-          It is recommended the <a>application</a> automatically saves its
-          state periodically to protect against data loss, in such a case.
+          The <a>application</a> can save its state periodically to
+          protect against data loss, in such a case.
         </p>
         <p>
           After the <code>terminate</code> event, or in case of forced
-          termination, the runtime should progress to actual termination,
-          which should at least include closing all remaining windows and
-          unloading of the main document. What other resources the runtime
-          unloads is up to the implementation.
+          termination, the runtime will progress to actual termination,
+          which at least includes closing all remaining windows and
+          unloading of the <a>main document</a>. What other resources the
+          runtime unloads is up to the implementation.
         </p>
         <p>
           There is an exception as the <a>application</a> can receive a wakeup
@@ -375,9 +375,9 @@ var respecConfig = {
           will not happen.
         </p>
         <p>
-          The runtime should avoid terminating an active, focused
-          <a>application</a> if at all possible. However, the runtime may
-          terminate that <a>application</a> as a last resort (e.g., due to
+          The runtime will avoid terminating an active, focused
+          <a>application</a> if at all possible. However, the runtime can
+          terminate the <a>application</a> as a last resort (e.g., due to
           resource exhaustion or bad behavior).
         </p>
       </section>
@@ -411,9 +411,8 @@ var respecConfig = {
           </li>
           <li>
             An <a>application</a> must be able to decide when to show the
-            user interface, if at all. It should be up to the
-            application developer to decide when it is appropriate
-            to show the user interface.
+            user interface, if at all. It is up to the application developer
+            to decide when it is appropriate to show the user interface.
           </li>
           <li>
             An <a>application</a> must be able to show the user interface
@@ -436,9 +435,9 @@ var respecConfig = {
             interface given how the app was launched.
             <ul>
               <li>
-                For example, if launched as a photo picker should not
-                show the default application window, but instead create
-                a special purpose user interface.
+                For example, if launched as a photo picker, the
+                <a>application</a> will not show the default application
+                window, but instead creates a special purpose user interface.
               </li>
             </ul>
           </li>
@@ -449,10 +448,10 @@ var respecConfig = {
               <li>
                 As the persistent events can result in launching dormant
                 apps, it is important that that only happens for subscribed
-                events and it should support some kind of prefiltering,
-                such that if the app listens to say a usb-plugged signal,
-                it can define to only listen to a specific device
-                connected or a specific port.
+                events which support pre-filtering. For example, if an
+                <a>application</a> listens to a <code>usb-plugged</code>
+                event, it can additionally ask to only listen to a specific
+                device connected or a specific port.
               </li>
             </ul>
           </li>
@@ -491,9 +490,9 @@ var respecConfig = {
         <section>
           <h3>Creating a Main Document</h3>
           <div class="issue">
-            <dfn>Create a main document</dfn> steps must be defined. The
-            <a>main document</a> should be created based on the manifest
-            presence.
+            Define <dfn>create a main document</dfn> steps (the
+            <a>main document</a> is created based on the presence of
+            a valid manifest).
           </div>
         </section>
         <section>
@@ -504,10 +503,10 @@ var respecConfig = {
             is a <a>main environment</a>.
           </p>
           <div class="note">
-            Describe disabled features and APIs, or APIs that may behave
+            Describe disabled features and APIs, or APIs that can behave
             differently. For example, synchronous blocking APIs such as
             alert() and prompt() are disallowed. For the same reasons,
-            window.open() should perhaps be disallowed.
+            window.open() can be problematic.
           </div>
         </section>
       </section>
@@ -529,7 +528,7 @@ var respecConfig = {
           the <a>application</a> that launched it. Does Web Activities/Intents
           address the use case (in scope for
           <a href="http://www.w3.org/2009/dap/#webintents">Web Intents Task
-          Force</a>), or should we e.g. pass such data in
+          Force</a>), or is this addressed by e.g. passing the data in
           <code>LaunchEvent</code>?
         </div>
         <p>
@@ -544,7 +543,7 @@ var respecConfig = {
           handling.
         </p>
         <div class="note">
-          Explain how the <code>other</code> reason should be handled
+          Explain how the <code>other</code> reason is handled
           by application developers.
         </div>
         <p>
@@ -566,17 +565,17 @@ var respecConfig = {
           the lifetime of an <a>application</a>. These events do not originate
           from the DOM itself and thus live outside of the document
           lifetime. As the <a>application</a> can be terminated, a new type of
-          event is required which can wake up the <a>application</a> as a result.
+          event is can wake up the <a>application</a> as a result.
         </p>
         <div class="note">
-          An <a>application</a> is required to resubscribe to events when launched,
+          An <a>application</a> will to resubscribe to events when launched,
           or alternatively, the data of the persistent event could be passed
           in a <code><a>LaunchEvent</a></code> as extra argument(s) when
           the <a>application is launched</a>? This needs to be clarified.
         </div>
         <p>
           To prevent an <a>application</a> from being woken up for no reason,
-          filtering must happen in the runtime and not in an <a>application</a>.
+          filtering happens in the runtime and not in an <a>application</a>.
         </p>
         <p>
           Persistent events are similar to regular events, but outlive
@@ -656,7 +655,7 @@ var respecConfig = {
             <h3>Event Registration</h3>
             <p>
               The listeners only exist in the context of the <a>main document</a>.
-              <code>addPersistentEventListener</code> must be called each time the
+              <code>addPersistentEventListener</code> is called each time the
               <a>main document</a> is launched after termination.
             </p>
             <div class="note">
@@ -670,7 +669,7 @@ var respecConfig = {
         Application Lifecycle Extensions
       </h2>
       <div class="issue">
-        Should remove features that do not have strong use cases and
+        Remove features that do not have strong use cases and
         consider them in v2. After implementation feedback, we can add
         features that appear to be lacking. For example,
         <code>reason</code> in <code>LaunchEvent</code>,
