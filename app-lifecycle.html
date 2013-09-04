@@ -133,7 +133,9 @@ var respecConfig = {
                 win.show();
               } else {
                 doc.onreadystatechange = function() {
-                  if (doc.readyState == "complete") win.show();
+                  if (doc.readyState == "complete") {
+                    win.show();
+                  }
                 };
               }
             }
