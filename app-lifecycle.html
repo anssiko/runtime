@@ -573,6 +573,15 @@ var respecConfig = {
           lifetime. As the <a>application</a> can be terminated, a new type of
           event can wake up the <a>application</a> as a result.
         </p>
+        <p>
+           An implementation can allow a <a>persistent event</a> to wake up
+          the system from sleeping.
+        </p>
+        <div class="note">
+          For example, in a Linux-kernel based
+          mobile device, need to acquire a CPU wake lock first before
+          firing events at the <a>main document</a>.
+        </div>
         <div class="note">
           An <a>application</a> will resubscribe to events when launched,
           or alternatively, the data of the persistent event could be passed
