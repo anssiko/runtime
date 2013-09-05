@@ -143,7 +143,7 @@ var respecConfig = {
         };
         &lt;/script&gt;        
       </pre>
-      <div class="issue">
+      <div class="note">
         Simplify the above example for better ergonomics. Is there a way to avoid
         needing two branches, e.g. could we invoke fulfill callback only after
         the <code>readyState</code> is set to <code>complete</code>
@@ -304,6 +304,9 @@ var respecConfig = {
           Behavior Adaptation at Launch
         </h2>
         <p>
+          This section is non-normative.
+        </p>
+        <p>
           The runtime does not create any visible windows by itself when
           launching an <a>application</a>. This is up to the <a>application</a>
           and is handled as part of the <code>launch</code> event.
@@ -338,6 +341,9 @@ var respecConfig = {
         <section>
           <h3>Wakeup-initiated Launch</h3>
           <p>
+            This section is non-normative.
+          </p>
+          <p>
             An <a>application</a> can schedule itself for wake-up by scheduling
             a task according to the Application Task Scheduling
             [SYSAPPS-TASK-SCHED]. On the contrary to setTimeout which will
@@ -367,6 +373,9 @@ var respecConfig = {
         <h2>
           Termination Sequence
         </h2>
+        <p>
+          This section is non-normative.
+        </p>
         <p>
           The runtime terminates the <a>application</a> if it becomes idle
           or in case or resource constraints.
@@ -403,136 +412,10 @@ var respecConfig = {
         </p>
       </section>
       <section>
-        <h2>Creating Windows</h2>
-        <p>
-          One or more windows might be created from the main document.
-          These windows are directly scriptable by the main document.
-        </p>
-        <div class="note">
-          TODO: expand windowing use cases in a separate specification.
-        </div>
-      </section>
-      <section>
-        <h2>
-          Requirements
-        </h2>
-        <div class="note">
-          Map these requirements to corresponding
-          <a href="https://github.com/sysapps/runtime/issues/">
-          issues in GitHub</a>.
-        </div>
-        <p>
-          Below is a summary of requirements derived from the above
-          use cases:
-        </p>
-        <ol>
-          <li>
-            An <a>application</a> (e.g. a background service) must be able
-            to run without visible user interface.
-          </li>
-          <li>
-            An <a>application</a> must be able to decide when to show the
-            user interface, if at all. It is up to the application developer
-            to decide when it is appropriate to show the user interface.
-          </li>
-          <li>
-            An <a>application</a> must be able to show the user interface
-            only after it is fully constructed and all the needed
-            data has been loaded.
-          </li>
-          <li>
-            The runtime model must support authoring an <a>application</a>
-            (or a service without user interface) that can be
-            terminated without user’s consent, and that is able to
-            restore to its previous state.
-          </li>
-          <li>
-            After being launched, an <a>application</a> must be able to
-            execute scripts to recreate its state before recreating
-            the actual user interface.
-          </li>
-          <li>
-            An <a>application</a> must be able to show a different user
-            interface given how the app was launched.
-            <ul>
-              <li>
-                For example, if launched as a photo picker, the
-                <a>application</a> will not show the default application
-                window, but instead creates a special purpose user interface.
-              </li>
-            </ul>
-          </li>
-          <li>
-            The runtime must provide a mechanism to prevent an
-            <a>application</a> from being launched unnecessarily.
-            <ul>
-              <li>
-                As the persistent events can result in launching dormant
-                apps, it is important that that only happens for subscribed
-                events which support pre-filtering. For example, if an
-                <a>application</a> listens to a <code>usb-plugged</code>
-                event, it can additionally ask to only listen to a specific
-                device connected or a specific port.
-              </li>
-            </ul>
-          </li>
-          <li>
-            The runtime must provide a one entry point for window
-            creation to prevent race conditions (see
-            <a href="https://github.com/sysapps/runtime/issues/100">#100</a>).
-          </li>
-          <li>
-            The <a>application</a> must be able to create a window and
-            have it laid out correctly with the right dimensions
-            before being shown.
-            <ul>
-              <li>
-                This allows emulating the splash screen/application
-                screenshot at launch for any screen size, before
-                loading any application logic, so that the screenshot
-                is not needed to be part of the manifest.
-              </li>
-            </ul>
-          </li>
-        </ol>
-      </section>
-    </section>
-    <section>
-      <h2>Infrastructure</h2>
-      <section>
-        <h3>Main Document</h3>
-        <p>
-          There is only one <dfn>main document</dfn> per <a>application</a>.
-        </p>
-        <div class="note">
-          Define the main document, and explain relationship between the
-          main document and the main environment.
-        </div>
-        <section>
-          <h3>Creating a Main Document</h3>
-          <div class="issue">
-            Define <dfn>create a main document</dfn> steps (the
-            <a>main document</a> is created based on the presence of
-            a valid manifest).
-          </div>
-        </section>
-        <section>
-          <h3>APIs Available to the Main Document</h3>
-          <p>
-            The interfaces defined in this specification must be only
-            exposed to JavaScript if the <a>JavaScript global environment</a>
-            is a <a>main environment</a>.
-          </p>
-          <div class="note">
-            Describe disabled features and APIs, or APIs that can behave
-            differently. For example, synchronous blocking APIs such as
-            alert() and prompt() are disallowed. For the same reasons,
-            window.open() can be problematic.
-          </div>
-        </section>
-      </section>
-      <section>
         <h3>Application Events</h3>
+        <p>
+          This section is non-normative.
+        </p>
         <p>
           The runtime context associated with the <a>main document</a> can
           be launched and terminated either by the user, another
@@ -541,17 +424,9 @@ var respecConfig = {
           idle (no visible views or connected message ports).
           In the case the <a>application</a> received an event (or something
           similar, like a task was scheduled) while handling terminate,
-          the terminatecanceled event will be fired successively and
-          the main document will stay active until considered idle again.
+          the "terminate canceled" event will be fired successively and
+          the <a>main document</a> will stay active until considered idle again.
         </p>
-        <div class="issue">
-          Need a mechanism for passing data to the <a>main document</a> from
-          the <a>application</a> that launched it. Does Web Activities/Intents
-          address the use case (in scope for
-          <a href="http://www.w3.org/2009/dap/#webintents">Web Intents Task
-          Force</a>), or is this addressed by e.g. passing the data in
-          <code>LaunchEvent</code>?
-        </div>
         <div class="note">
           Mozilla would like the
           <a href="https://developer.mozilla.org/en-US/docs/WebAPI/Simple_Push">
@@ -560,17 +435,17 @@ var respecConfig = {
         </div>
         <p>
           When the <a>application</a> is launched, the launch event is fired
-          with a reason which can be of type <code>pending-event</code>,
-          <code>scheduled</code> or <code>other</code>. If the
+          with a reason which can be of type "pending event",
+          "scheduled" or "other". If the
           <a>application</a> was launched in order to handle an event it
           subscribed to or in response to a scheduled task, the type
-          will be <code>pending-event</code> and <code>scheduled</code>
+          will be "pending event" and "scheduled"
           respectively. This allows for the <a>application</a> to avoid creating
           any user interface not resulting from the respective event
           handling.
         </p>
         <div class="note">
-          Explain how the <code>other</code> reason is handled
+          Explain how the "other" reason is handled
           by application developers.
         </div>
         <p>
@@ -582,11 +457,14 @@ var respecConfig = {
         </p>
         <p>
           For handling application lifecycle, the <a>application</a>'s
-          <a>main document</a> can listen to the events defined below.
+          <a>main document</a> can listen to the events.
         </p>
       </section>
       <section>
         <h2>Persistent Events</h2>
+        <p>
+          This section is non-normative.
+        </p>
         <p>
           A <dfn>persistent event</dfn> is an event that persists over
           the lifetime of an <a>application</a>. These events do not originate
@@ -660,13 +538,16 @@ var respecConfig = {
         <p>
           When an <a>application</a> is launched as a result of a persistent event,
           firstly its <a>main document</a> is loaded, then the
-          <code>launch</code> event is dispatched, and immediately after
-          the <code>launch</code> event, the persistent event handler is
+          launch event is dispatched, and immediately after
+          the launch event, the persistent event handler is
           called. If the <a>application</a> did not register the listener as part
           of the launch event, nothing happens.
         </p>
           <section>
             <h3>Filtered Events</h3>
+            <p>
+              This section is non-normative.
+            </p>
             <p>
               Filtered events are a mechanism that allows listeners to
               specify a subset of events that they are interested in.
@@ -690,14 +571,149 @@ var respecConfig = {
           <section>
             <h3>Event Registration</h3>
             <p>
+              This section is non-normative.
+            </p>
+            <p>
               The listeners only exist in the context of the <a>main document</a>.
-              <code>addPersistentEventListener</code> is called each time the
-              <a>main document</a> is launched after termination.
+              Event listeners for persistent events need to be registed each
+              time the <a>main document</a> is launched after termination.
             </p>
             <div class="note">
-              Specify addPersistentEventListener et al.
+              Specify addPersistentEventListener or similar for persistent events.
             </div>
           </section>
+      </section>
+      <section>
+        <h2>Creating Windows</h2>
+        <p>
+          This section is non-normative.
+        </p>
+        <p>
+          One or more windows might be created from the main document.
+          These windows are directly scriptable by the main document.
+        </p>
+        <div class="note">
+          TODO: expand windowing use cases in a separate specification.
+        </div>
+      </section>
+      <section>
+        <h2>
+          Requirements
+        </h2>
+        <div class="note">
+          Map these requirements to corresponding
+          <a href="https://github.com/sysapps/runtime/issues/">
+          issues in GitHub</a>.
+        </div>
+        <p>
+          Below is a summary of requirements derived from the above
+          use cases:
+        </p>
+        <ol>
+          <li>
+            An <a>application</a> (e.g. a background service) must be able
+            to run without visible user interface.
+          </li>
+          <li>
+            An <a>application</a> must be able to decide when to show the
+            user interface, if at all. It is up to the application developer
+            to decide when it is appropriate to show the user interface.
+          </li>
+          <li>
+            An <a>application</a> must be able to show the user interface
+            only after it is fully constructed and all the needed
+            data has been loaded.
+          </li>
+          <li>
+            The runtime model must support authoring an <a>application</a>
+            (or a service without user interface) that can be
+            terminated without user’s consent, and that is able to
+            restore to its previous state.
+          </li>
+          <li>
+            After being launched, an <a>application</a> must be able to
+            execute scripts to recreate its state before recreating
+            the actual user interface.
+          </li>
+          <li>
+            An <a>application</a> must be able to show a different user
+            interface given how the app was launched.
+            <ul>
+              <li>
+                For example, if launched as a photo picker, the
+                <a>application</a> will not show the default application
+                window, but instead creates a special purpose user interface.
+              </li>
+            </ul>
+          </li>
+          <li>
+            The runtime must provide a mechanism to prevent an
+            <a>application</a> from being launched unnecessarily.
+            <ul>
+              <li>
+                As the persistent events can result in launching dormant
+                apps, it is important that that only happens for subscribed
+                events which support pre-filtering. For example, if an
+                <a>application</a> listens to a "USB plugged"
+                event, it can additionally ask to only listen to a specific
+                device connected or a specific port.
+              </li>
+            </ul>
+          </li>
+          <li>
+            The runtime must provide a one entry point for window
+            creation to prevent race conditions (see
+            <a href="https://github.com/sysapps/runtime/issues/100">#100</a>).
+          </li>
+          <li>
+            The <a>application</a> must be able to create a window and
+            have it laid out correctly with the right dimensions
+            before being shown.
+            <ul>
+              <li>
+                This allows emulating the splash screen/application
+                screenshot at launch for any screen size, before
+                loading any application logic, so that the screenshot
+                is not needed to be part of the manifest.
+              </li>
+            </ul>
+          </li>
+        </ol>
+      </section>
+    </section>
+    <section>
+      <h2>Infrastructure</h2>
+      <section>
+        <h3>Main Document</h3>
+        <p>
+          There is only one <dfn>main document</dfn> per <a>application</a>.
+        </p>
+        <div class="issue">
+          Define the main document, and explain relationship between the
+          main document and the main environment.
+        </div>
+        <section>
+          <h3>Creating a Main Document</h3>
+          <div class="issue">
+            Define <dfn>create a main document</dfn> steps (the
+            <a>main document</a> is created based on the presence of
+            a valid manifest).
+          </div>
+        </section>
+        <section>
+          <h3>APIs Available to the Main Document</h3>
+          <p>
+            The interfaces defined in this specification must be only
+            exposed to JavaScript if the <a>JavaScript global environment</a>
+            is a <a>main environment</a>.
+          </p>
+          <div class="issue">
+            Define disabled features and APIs, or APIs that can behave
+            differently. For example, synchronous blocking APIs such as
+            alert() and prompt() are disallowed. For the same reasons,
+            window.open() can be problematic.
+          </div>
+        </section>
       </section>
     </section>
     <section>
@@ -916,6 +932,14 @@ var respecConfig = {
               </tr>
             </tbody>
           </table>
+          <div class="issue">
+            Need a mechanism for passing data to the <a>main document</a> from
+            the <a>application</a> that launched it. Does Web Activities/Intents
+            address the use case (in scope for
+            <a href="http://www.w3.org/2009/dap/#webintents">Web Intents Task
+            Force</a>), or is this addressed by e.g. passing the data in
+            <code>LaunchEvent</code>?
+          </div>
         </section>
 
         <section>
