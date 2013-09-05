@@ -168,7 +168,7 @@ var respecConfig = {
       </p>
       <p>
         Implementations that use ECMAScript to implement the APIs defined
-        in this specification must implement them in a manner consistent
+        in this specification MUST implement them in a manner consistent
         with the ECMAScript Bindings defined in the Web IDL specification
         [[WEBIDL]], as this specification uses that specification and
         terminology.
@@ -611,32 +611,32 @@ var respecConfig = {
         </p>
         <ol>
           <li>
-            An <a>application</a> (e.g. a background service) must be able
+            An <a>application</a> (e.g. a background service) MUST be able
             to run without visible user interface.
           </li>
           <li>
-            An <a>application</a> must be able to decide when to show the
+            An <a>application</a> MUST be able to decide when to show the
             user interface, if at all. It is up to the application developer
             to decide when it is appropriate to show the user interface.
           </li>
           <li>
-            An <a>application</a> must be able to show the user interface
+            An <a>application</a> MUST be able to show the user interface
             only after it is fully constructed and all the needed
             data has been loaded.
           </li>
           <li>
-            The runtime model must support authoring an <a>application</a>
+            The runtime model MUST support authoring an <a>application</a>
             (or a service without user interface) that can be
             terminated without user’s consent, and that is able to
             restore to its previous state.
           </li>
           <li>
-            After being launched, an <a>application</a> must be able to
+            After being launched, an <a>application</a> MUST be able to
             execute scripts to recreate its state before recreating
             the actual user interface.
           </li>
           <li>
-            An <a>application</a> must be able to show a different user
+            An <a>application</a> MUST be able to show a different user
             interface given how the app was launched.
             <ul>
               <li>
@@ -647,7 +647,7 @@ var respecConfig = {
             </ul>
           </li>
           <li>
-            The runtime must provide a mechanism to prevent an
+            The runtime MUST provide a mechanism to prevent an
             <a>application</a> from being launched unnecessarily.
             <ul>
               <li>
@@ -661,12 +661,12 @@ var respecConfig = {
             </ul>
           </li>
           <li>
-            The runtime must provide a one entry point for window
+            The runtime MUST provide a one entry point for window
             creation to prevent race conditions (see
             <a href="https://github.com/sysapps/runtime/issues/100">#100</a>).
           </li>
           <li>
-            The <a>application</a> must be able to create a window and
+            The <a>application</a> MUST be able to create a window and
             have it laid out correctly with the right dimensions
             before being shown.
             <ul>
@@ -703,7 +703,7 @@ var respecConfig = {
         <section>
           <h3>APIs Available to the Main Document</h3>
           <p>
-            The interfaces defined in this specification must be only
+            The interfaces defined in this specification MUST be only
             exposed to JavaScript if the <a>JavaScript global environment</a>
             is a <a>main environment</a>.
           </p>
@@ -773,19 +773,19 @@ var respecConfig = {
           </dl>
           <p>
             When the <dfn>application is launched</dfn>, the user agent
-            must queue a task to <a>launch the application</a>.
+            MUST queue a task to <a>launch the application</a>.
           </p>
           <p>
             When the <dfn>application is terminated</dfn>, the user agent
-            must queue a task to <a>terminate the application</a>.
+            MUST queue a task to <a>terminate the application</a>.
           </p>
           <p>
             When the <dfn>application termination is canceled</dfn>, the
-            user agent must queue a task to <a>cancel the termination</a>.
+            user agent MUST queue a task to <a>cancel the termination</a>.
           </p>
           <p>
             The following are the event handlers (and their corresponding
-            event handler event types) that must be supported, as event
+            event handler event types) that MUST be supported, as event
             handler IDL attributes, by all objects implementing the
             ApplicationRuntime interface:
           <table class="simple">
@@ -844,8 +844,8 @@ var respecConfig = {
             </dd>
           </dl>
           <p>
-            When the user agent is required to <dfn>launch the application</dfn>,
-            the user agent must run the following steps:
+            When the user agent is REQUIRED to <dfn>launch the application</dfn>,
+            the user agent MUST run the following steps:
           </p>
           <ol>
             <li>
@@ -945,8 +945,8 @@ var respecConfig = {
         <section>
           <h3>Terminating the Application</h3>
           <p>
-            When the user agent is required to <dfn>terminate the application</dfn>,
-            it must run the following steps:
+            When the user agent is REQUIRED to <dfn>terminate the application</dfn>,
+            it MUST run the following steps:
           </p>
           <ol>
             <li>
@@ -986,8 +986,8 @@ var respecConfig = {
             </dd>
           </dl>
           <p>
-            When the user agent is required to <dfn>cancel the termination</dfn>,
-            the user agent must run the following steps:
+            When the user agent is REQUIRED to <dfn>cancel the termination</dfn>,
+            the user agent MUST run the following steps:
           </p>
           <ol>
             <li>
