@@ -262,16 +262,6 @@ var respecConfig = {
           element. If pure JavaScript is used, an empty document is
           created, including the associated scripts in their declared order.
         </p>
-        <div class="note">
-          Do we want to support authoring the main document in HTML with
-          JavaScript? Potential use cases: re-use of existing developer
-          tools for authoring, easier debugging. Pure JavaScript would
-          be aligned with the Worker model and the way how browser extensions
-          are typically authored. If the main document is pure
-          JavaScript it is hidden by default. But if it is HTML make it be
-          visible by default to make the common use case of showing HTML
-          simple?
-        </div>
         <p>
           In the following example, instead of loading an HTML page, an
           implicit one is constructed which loads <code>polymer.min.js</code>
@@ -696,8 +686,21 @@ var respecConfig = {
           There is only one <dfn>main document</dfn> per <a>application</a>.
         </p>
         <div class="issue">
+          Add support for Worker-based main document (Background Worker?).
+        </div>
+        <div class="issue">
           Define the main document, and explain relationship between the
           main document and the main environment.
+        </div>
+        <div class="issue">
+          Do we want to support authoring the main document in HTML with
+          JavaScript? Potential use cases: re-use of existing developer
+          tools for authoring, easier debugging. Pure JavaScript would
+          be aligned with the Worker model and the way how browser extensions
+          are typically authored. If the main document is pure
+          JavaScript it is hidden by default. But if it is HTML make it be
+          visible by default to make the common use case of showing HTML
+          simple?
         </div>
         <section>
           <h3>Creating a Main Document</h3>
