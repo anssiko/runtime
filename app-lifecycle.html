@@ -466,6 +466,13 @@ var respecConfig = {
           This section is non-normative.
         </p>
         <p>
+          A typical browser-driven use case for persistent events is
+          an email application that wants to show a desktop notification
+          when a push notification is received so the user is informed that
+          there are new emails even though the tab in which the email
+          application was running has been closed.
+        </p>
+        <p>
           A <dfn>persistent event</dfn> is an event that persists over
           the lifetime of an <a>application</a>. These events do not originate
           from the DOM itself and thus live outside of the document
