@@ -688,6 +688,15 @@ var respecConfig = {
         <div class="issue">
           Add support for Worker-based main document (Background Worker?).
         </div>
+        <div class="note">
+          If the JavaScript global environment is a worker environment,
+          the responseType of "document" is not supported as per [[XHR]].
+          <pre class="example">
+          xhr.responseType = "document"; // in worker environment, simply ignored
+          xhr.response; // response entity body is read as text response entity body
+          xhr.responseXML; // returns null
+          </pre>
+        </div>
         <div class="issue">
           Define the main document, and explain relationship between the
           main document and the main environment.
