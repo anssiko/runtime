@@ -207,11 +207,14 @@ var respecConfig = {
         The term <dfn>application</dfn> in the context of this specification
         refers to a
         <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#terminology">document</a>
-        that references a valid <a>main document</a> in its manifest
-        [SYSAPPS-MANIFEST]. This includes "mere web pages", as well
-        as packaged and hosted web applications, that meet the above
-        requirement.
+        or <a>packaged application</a> that references a
+        <a>main document</a> in its manifest [SYSAPPS-MANIFEST].
+        This includes "mere web pages", as well as packaged and
+        hosted web applications, that meet the above requirement.
       </p>
+      <div class="note">
+        The concept <dfn>packaged application</dfn> needs to be defined.
+      </div>
       <p>
         The <dfn><a href=
         "http://dev.w3.org/html5/spec/webappapis.html#event-handlers">EventHandler</a></dfn>
@@ -679,68 +682,106 @@ var respecConfig = {
       </section>
     </section>
     <section>
-      <h2>Infrastructure</h2>
+      <h2>Main Document</h2>
+      <p>
+        There MUST be no more than one <dfn>main document</dfn>
+        per <a>application</a>. A <a>main document</a> is either of
+        type "document" or "worker".
+      </p>
+      <div class="issue">
+        Define <dfn>create a main document</dfn> steps (the
+        <a>main document</a> of type <em>type</em> is created based
+        on the definitions in the manifest).
+      </div>
+      <div class="issue">
+        Do we want to support authoring the main document of type "document"
+        in HTML with JavaScript? Potential use cases: re-use of existing
+        developer tools for authoring, easier debugging. Pure JavaScript would
+        be aligned with a main document of type "worker" and the way how
+        browser extensions are typically authored. Alternative: if the main
+        document is pure JavaScript it is hidden by default. But if it is
+        HTML it is visible by default to make the common use case of showing
+        HTML simple.
+      </div>
+      <div class="issue">
+        Can a main document of type "worker" transition to a main document
+        of type "document"
+        (<code>importScripts()</code> is the only API missing?).
+      </div>
+      <div class="issue">
+        Dereferencing and retrieval of files from within a package
+        of type "document" and "worker"? XHR only?
+      </div>
       <section>
-        <h3>Main Document</h3>
+        <h3>APIs Available to the Main Document</h3>
         <p>
-          There is only one <dfn>main document</dfn> per <a>application</a>.
+          If the <a>main document</a> is of type "document", the following
+          interfaces are not exposed to JavaScript:
         </p>
+        <ul>
+          <li>
+            TODO
+          </li>
+        </ul>
         <div class="issue">
-          Add support for Worker-based main document (Background Worker?).
-          A Worker-based main document can transition to a document
-          (is <code>importScripts()</code> the only API missing in that case?).
+          Define disabled features and APIs, or APIs that can behave
+          differently. For example, synchronous blocking APIs such as
+          alert() and prompt() are disallowed. For the same reasons,
+          window.open() can be problematic.
         </div>
+        <p>
+          If the <a>main document</a> is of type "worker" only
+          the following interfaces are exposed to JavaScript:
+        </p>
+        <ul>
+          <li>
+            <code><a>ApplicationRuntime</a></code>
+            (TODO: and others defined in this specification)
+          </li>
+          <li>
+            <code>navigator</code> object
+          </li>
+          <li>
+            <code>location</code> object (read-only)
+          </li>
+          <li>
+            <code>XMLHttpRequest()</code> method
+          </li>
+          <li>
+            <code>setTimeout()/clearTimeout()</code> and
+            <code>setInterval()/clearInterval()</code>
+          </li>
+          <li>
+             <code>applicationCache</code> object
+          </li>
+          <li>
+            <code>importScripts()</code> method
+          </li>
+          <li>
+            <code>Worker()</code> method (spawning web workers)
+          </li>
+        </ul>
         <div class="note">
           If the JavaScript global environment is a worker environment,
-          the responseType of "document" is not supported as per [[XHR]].
+          the <code>responseType</code> of <code>document</code> is not
+          supported as per [[XHR]].
           <pre class="example">
           xhr.responseType = "document"; // in worker environment, simply ignored
           xhr.response; // response entity body is read as text response entity body
           xhr.responseXML; // returns null
           </pre>
         </div>
-        <div class="issue">
-          Define the main document, and explain relationship between the
-          main document and the main environment.
-        </div>
-        <div class="issue">
-          Do we want to support authoring the main document in HTML with
-          JavaScript? Potential use cases: re-use of existing developer
-          tools for authoring, easier debugging. Pure JavaScript would
-          be aligned with the Worker model and the way how browser extensions
-          are typically authored. If the main document is pure
-          JavaScript it is hidden by default. But if it is HTML make it be
-          visible by default to make the common use case of showing HTML
-          simple?
-        </div>
-        <section>
-          <h3>Creating a Main Document</h3>
-          <div class="issue">
-            Define <dfn>create a main document</dfn> steps (the
-            <a>main document</a> is created based on the presence of
-            a valid manifest).
-          </div>
-        </section>
-        <section>
-          <h3>APIs Available to the Main Document</h3>
-          <p>
-            The interfaces defined in this specification MUST be only
-            exposed to JavaScript if the <a>JavaScript global environment</a>
-            is a <a>main environment</a>.
-          </p>
-          <div class="issue">
-            Define disabled features and APIs, or APIs that can behave
-            differently. For example, synchronous blocking APIs such as
-            alert() and prompt() are disallowed. For the same reasons,
-            window.open() can be problematic.
-          </div>
-        </section>
       </section>
     </section>
     <section>
       <h2>
         Application Lifecycle Extensions
       </h2>
+      <p>
+        The interfaces defined in this specification MUST be only
+        exposed to JavaScript if the <a>JavaScript global environment</a>
+        is a <a>main environment</a>.
+      </p>
       <div class="issue">
         Remove features that do not have strong use cases and
         consider them in v2. After implementation feedback, we can add
