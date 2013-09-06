@@ -1083,6 +1083,14 @@ var respecConfig = {
             <li>
               <a>Discard the main document</a>.
           </ol>
+          <div class="issue">
+            Need to make it clear that the <a>main document</a> can be
+            terminated only when it is idling, all Promises resolved, all
+            indexedDB transactions completed, no Workers running etc. However,
+            Badly behaving application that try to prevent an application for
+            being closed can be killed by the system similarly to
+            <code>onunload</code>.
+          </div>
         </section>
 
         <section>
