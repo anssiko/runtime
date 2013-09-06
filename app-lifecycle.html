@@ -575,12 +575,9 @@ var respecConfig = {
             </p>
             <p>
               The listeners only exist in the context of the <a>main document</a>.
-              Event listeners for persistent events need to be registed each
+              Event listeners for persistent events need to be registered each
               time the <a>main document</a> is launched after termination.
             </p>
-            <div class="note">
-              Specify addPersistentEventListener or similar for persistent events.
-            </div>
           </section>
       </section>
       <section>
@@ -849,7 +846,7 @@ var respecConfig = {
             The following are the event handlers (and their corresponding
             event handler event types) that MUST be supported, as event
             handler IDL attributes, by all objects implementing the
-            ApplicationRuntime interface:
+            <code><a>ApplicationRuntime</a></code> interface:
           <table class="simple">
             <thead>
               <tr>
@@ -888,6 +885,16 @@ var respecConfig = {
               </tr>
             </tbody>
           </table>
+          <div class="issue">
+            Can we use the usual EventHandler paradigm also for <a>persistent
+            event</a>s instead of using a non-standard way to add an event
+            listener such as <code>.onfoo.addPersistentEventListener()</code>?
+            Proposal: if a <a>persistent event</a> is sent to the <code>runtime</code>
+            object, launch the <a>main document</a>. Open issues if using
+            EventHandler: how to support filtering; how to make
+            the "persistent" difference obvious so that developers do
+            not expect regular DOM Events to launch the main document.
+          </div>
         </section>
         <section>
           <h3>Launching the Application</h3>
