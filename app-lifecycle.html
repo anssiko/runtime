@@ -560,6 +560,13 @@ var respecConfig = {
           called. If the <a>application</a> did not register the listener as part
           of the launch event, nothing happens.
         </p>
+        <div class="note">
+          To register for persistent events, need an event handler that is
+          triggered when the application is first installed, the application
+          is updated, or the runtime is updated to a new version
+          ("oninstalled" or similar). Registration through the Manifest
+          would be beneficial too.
+        </div>
           <section>
             <h3>Filtered Events</h3>
             <p>
