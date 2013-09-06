@@ -336,6 +336,13 @@ var respecConfig = {
             Is it be an implementation detail whether background
             services are visible e.g. in a system monitor?
           </div>
+          <div class="note">
+            Persistent event is a confusing name. We could say "incoming event",
+            "subscribed event", or "system event". The event is not persistent;
+            the subscription to the event is persistent. There should not be
+            any persistent/system event distinction, the events in that context
+            should all be like "system messages", they launch the main document.
+          </div>
         </section>
         <section>
           <h3>Wakeup-initiated Launch</h3>
