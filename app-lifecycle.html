@@ -757,6 +757,9 @@ var respecConfig = {
           <li>
             <code>Worker()</code> method (spawning web workers)
           </li>
+          <li>
+            <code>indexedDB</code> object
+          </li>
         </ul>
         <div class="note">
           If the JavaScript global environment is a worker environment,
@@ -767,6 +770,12 @@ var respecConfig = {
           xhr.response; // response entity body is read as text response entity body
           xhr.responseXML; // returns null
           </pre>
+        </div>
+        <div class="issue">
+          What persistent storage APIs are available?
+          <code>document.cookie</code>, <code>localStorage</code>
+          are not available to workers, only <code>indexedDB</code>
+          is available.
         </div>
       </section>
     </section>
