@@ -234,6 +234,12 @@ var respecConfig = {
         "http://dev.w3.org/html5/spec/webappapis.html#event-handler-event-type">
         event handler event types</a></dfn> are defined in [[!HTML5]].
       </p>
+      <p>
+        The <dfn><a href="http://dev.w3.org/html5/workers/#the-workerglobalscope-common-interface">WorkerGlobalScope</a></dfn> common interface is defined in [[!WEBWORKERS]].
+      </p>
+      <p>
+        The <dfn><a href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#application-cache-api">ApplicationCache</a></dfn> interface is defined in [[!HTML5]].
+      </p>
     </section>
     <section class="informative">
       <h2>
@@ -682,85 +688,127 @@ var respecConfig = {
       <h2>Main Document</h2>
       <p>
         There MUST be no more than one <dfn>main document</dfn>
-        per <a>application</a>. A <a>main document</a> is either of
-        type "document" or "worker".
+        per <a>application</a>.
       </p>
+      <p>
+        A <a>main document</a> <dfn>type</dfn> is one of the following:
+      </p>
+      <ul>
+        <li>
+          "document"
+        </li>
+        <li>
+          "worker"
+        </li>
+      </ul>
       <div class="issue">
-        Define <dfn>create a main document</dfn> steps (the
-        <a>main document</a> of type <em>type</em> is created based
-        on the definitions in the manifest).
+        Define <dfn>create a main document</dfn> and <dfn>discard a main document</dfn>
+        steps. The <a>main document</a> of <a>type</a> <em>type</em> is created
+        according to the definitions given in the <a>Packaged Applications</a>
+        specification (which itself needs to be specified).
       </div>
       <div class="issue">
-        Do we want to support authoring the main document of type "document"
+        Do we want to support authoring the main document of <a>type</a> "document"
         in HTML with JavaScript? Potential use cases: re-use of existing
         developer tools for authoring, easier debugging. Pure JavaScript would
-        be aligned with a main document of type "worker" and the way how
+        be aligned with a main document of <a>type</a> "worker" and the way how
         browser extensions are typically authored. Alternative: if the main
         document is pure JavaScript it is hidden by default. But if it is
         HTML it is visible by default to make the common use case of showing
         HTML simple.
       </div>
       <div class="issue">
-        Can a main document of type "worker" transition to a main document
-        of type "document"
+        Can a <a>main document</a> of <a>type</a> "worker" transition to a
+        <a>main document</a> of <a>type</a> "document"
         (<code>importScripts()</code> is the only API missing?).
       </div>
       <div class="issue">
         Dereferencing and retrieval of files from within a package
-        of type "document" and "worker"? XHR only?
+        of <a>type</a> "document" and "worker"? XHR only?
       </div>
       <section>
         <h3>APIs Available to the Main Document</h3>
+        <dl title='partial interface Window' class='idl'>
+          <dt>
+            readonly attribute ApplicationRuntime runtime
+          </dt>
+          <dd>
+          </dd>
+        </dl>
         <p>
-          If the <a>main document</a> is of type "document", the following
-          interfaces are not exposed to JavaScript:
+          The <code><a>ApplicationRuntime</a></code> instance must only
+          be exposed on the <code>Window</code> object if the
+          <a>JavaScript global environment</a> is a <a>main environment</a>
+          and the <a>main document</a> is of <a>type</a> "document".
         </p>
-        <ul>
-          <li>
-            TODO
-          </li>
-        </ul>
         <div class="issue">
-          Define disabled features and APIs, or APIs that can behave
-          differently. For example, synchronous blocking APIs such as
-          alert() and prompt() are disallowed. For the same reasons,
-          window.open() can be problematic.
+          Define disabled features and APIs, and APIs that can behave
+          differently if the main document is of type "document". For example,
+          synchronous blocking APIs such as alert() and prompt() are disallowed.
+          For the same reasons, window.open() can be problematic.
         </div>
+        <dl title='interface MainWorkerGlobalScope : WorkerGlobalScope' class='idl'>
+          <dt>
+            readonly attribute ApplicationRuntime runtime
+          </dt>
+          <dd>
+          </dd>
+          <dt>
+            readonly attribute DOMString name
+          </dt>
+          <dd>
+          </dd>
+          <dt>
+            readonly attribute ApplicationCache applicationCache
+          </dt>
+          <dd>
+          </dd>
+          <dt>
+            attribute EventHandler onconnect
+          </dt>
+          <dd>
+          </dd>
+        </dl>
         <p>
-          If the <a>main document</a> is of type "worker" only
-          the following interfaces are exposed to JavaScript:
+          The <code><a>MainWorkerGlobalScope</a></code> interface must only
+          be exposed to JavaScript if the <a>JavaScript global environment</a>
+          is a <a>main environment</a> and the <a>main document</a> is of
+          <a>type</a> "worker".
         </p>
-        <ul>
-          <li>
-            <code><a>ApplicationRuntime</a></code>
-            (TODO: and others defined in this specification)
-          </li>
-          <li>
-            <code>navigator</code> object
-          </li>
-          <li>
-            <code>location</code> object (read-only)
-          </li>
-          <li>
-            <code>XMLHttpRequest()</code> method
-          </li>
-          <li>
-            <code>setTimeout()/clearTimeout()</code> and
-            <code>setInterval()/clearInterval()</code>
-          </li>
-          <li>
-             <code>applicationCache</code> object
-          </li>
-          <li>
-            <code>importScripts()</code> method
-          </li>
-          <li>
-            <code>Worker()</code> method (spawning web workers)
-          </li>
-          <li>
-            <code>indexedDB</code> object
-          </li>
-        </ul>
+        <div class="note">
+          This is a (non-exhaustive) list of APIs exposed to
+          <code>MainWorkerGlobalScope</code>:
+          <ul>
+            <li>
+              <code>navigator</code> object
+            </li>
+            <li>
+              <code>location</code> object (read-only)
+            </li>
+            <li>
+              <code>XMLHttpRequest()</code> method
+            </li>
+            <li>
+              <code>setTimeout()/clearTimeout()</code> and
+              <code>setInterval()/clearInterval()</code>
+            </li>
+            <li>
+               <code>applicationCache</code> object
+            </li>
+            <li>
+              <code>importScripts()</code> method
+            </li>
+            <li>
+              <code>Worker()</code> method (spawning web workers)
+            </li>
+            <li>
+              <code>indexedDB</code> object
+            </li>
+            <li>
+              ...
+            </li>
+          </ul>
+        </div>
         <div class="note">
           If the JavaScript global environment is a worker environment,
           the <code>responseType</code> of <code>document</code> is not
@@ -781,13 +829,8 @@ var respecConfig = {
     </section>
     <section>
       <h2>
-        Application Lifecycle Extensions
+        Application Lifecycle and Events Extensions
       </h2>
-      <p>
-        The interfaces defined in this specification MUST be only
-        exposed to JavaScript if the <a>JavaScript global environment</a>
-        is a <a>main environment</a>.
-      </p>
       <div class="issue">
         Remove features that do not have strong use cases and
         consider them in v2. After implementation feedback, we can add
@@ -796,27 +839,6 @@ var respecConfig = {
         <code>terminate</code> and <code>terminatecanceled</code>
         are proposed to be deferred to v2 without strong use cases.
       </div>
-      
-      <section>
-        <h2>
-          Extension to the <a>Window</a> interface
-        </h2>
-        <section>
-          <p>
-            An <a>ApplicationRuntime</a> instance is exposed on the
-            <code>Window</code> object through the
-            <code>runtime</code> attribute.
-          </p>
-          <dl title='partial interface Window' class='idl'>
-            <dt>
-              readonly attribute ApplicationRuntime runtime
-            </dt>
-            <dd>
-              The attribute MUST return an <a>ApplicationRuntime</a> instance.
-            </dd>
-          </dl>
-        </section>
-      </section>
       <section>
         <h2>
           <a>ApplicationRuntime</a> interface
@@ -927,7 +949,7 @@ var respecConfig = {
           </p>
           <ol>
             <li>
-              Create a new <a>main document</a>, if there is no
+              <a>Create a main document</a>, if there is no
               <a>main document</a>.
             </li>
             <li>
@@ -1042,8 +1064,7 @@ var respecConfig = {
               Close all the windows created by the <a>main environment</a>.
             </li>
             <li>
-              <a href="http://www.w3.org/TR/html5/browsers.html#discard-a-document">
-              Discard the main document</a>.
+              <a>Discard the main document</a>.
           </ol>
         </section>
 
