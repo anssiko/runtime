@@ -16,7 +16,7 @@ var respecConfig = {
         //publishDate:  "2012-12-12",
         //previousPublishDate:  "2013-03-21",
         previousMaturity:     "ED",
-        edDraftURI:           "http://www.w3.org/2012/sysapps/runtime/app-lifecycle.html",
+        edDraftURI:           "http://www.w3.org/2012/sysapps/app-lifecycle/",
         // lcEnd: "3000-01-01",
         // crEnd: "3000-01-01",
 
@@ -42,7 +42,7 @@ var respecConfig = {
         wgURI:        "http://www.w3.org/2012/sysapps/",
         wgPublicList: "public-sysapps",
         wgPatentURI:  "http://www.w3.org/2004/01/pp-impl/58119/status",
-        subtitle:     "A Runtime and Security Model Extension Specification" 
+        subtitle:     "A Service Worker Extension Specification" 
       };
     </script>
     <style>
@@ -51,26 +51,25 @@ var respecConfig = {
   </head>
   <body>
     <section id='abstract'>
-      This specification describes a new <a>JavaScript global environment</a>,
-      the <a>main environment</a>, and defines APIs for managing the lifecycle
-      of an <a>application</a> and associated events exposed to this environment.
+      This specification extends <code><a>ServiceWorkerScope</a></code>
+      [<a>SERVICE-WORKER</a>] with APIs for managing the lifecycle of an
+      application and associated events.
     </section>
     <section class="informative">
       <h2>
         Introduction
       </h2>
       <p>
-        An <a>application</a> consists of a main entrance, which is an invisible
-        document whose purpose is to manage the application lifecycle. This
-        special-purpose document, referred to as the <a>main document</a>, has the
-        ability to react to persistent events, schedule tasks as well as
-        create additional windows, allowing application developers to create
-        regular applications as well as background services.
+        The JavaScript global environment defined in this specification allows
+        web developers to author applications that manage the application
+        lifecycle and react to system events. These capabilities
+        allow application developers to create applications that integrate
+        closely with the underlying system.
       </p>
       <p>
-        Using the APIs defined in this specification, an <a>application</a> is
-        able to run its application logic in its <a>main document</a> independently
-        of any user interface scripts and react to:
+        Using the APIs defined in this specification, an application is
+        able to run application logic independently of any user interface
+        scripts and react to:
       </p>
       <ul>
         <li>
@@ -78,29 +77,32 @@ var respecConfig = {
           (<a href="#application-events">application events</a>)
         </li>
         <li>
-          Events sent by the system (<a href="#persistent-events">persistent events</a>)
+          Events sent by the system (<a href="#system-events">system events</a>)
         </li>
         <li>
           Scheduled wakeup calls
         </li>
       </ul>
+      <!--
+      <div class="note">
+        The examples below are not up-to-date.
+      </div>
       <p>
         The manifest (<code>manifest.json</code>) states which file is used
         to represent the <a>main document</a>.
       </p>
       <pre class="example highlight">
         {
-          "main": { 'source': 'main.html' }
+          'main': { 'scripts': ['main.js'] } // TODO: should we allow registering a service worker via manifest?
         }
       </pre>
       <p>
         The <a>main document</a> has the ability to listen to the
-        <code>launch</code> event and for instance create a window.
+        launch event and for instance create a window.
         It is also possible to access the document for the window
         which was created.
       </p>
       <pre class="example highlight">
-        &lt;script&gt;
         runtime.onlaunch = function() {
           // Create a window for a given url.
           runtime.<a href="app-windowing.html#idl-def-ApplicationRuntime">createWindow</a>('main_ui.html').fulfill(function(win) {
@@ -110,16 +112,14 @@ var respecConfig = {
             doc.baz = 'Hello from app';
           });
         };
-        &lt;/script&gt;
       </pre>
       <p>
         Alternatively, if the author wants to show the window only when all
         content and referenced resources have been loaded, it is possible to
         initially hide the constructed window and inspect the document 
-        readyness on the newly constructed window.
+        readiness on the newly constructed window.
       </p>
       <pre class="example highlight">
-        &lt;script&gt;
         runtime.onlaunch = function() {
           // Create an initially hidden window for a given url.
           var options = { hidden: true };
@@ -141,7 +141,6 @@ var respecConfig = {
             }
           );
         };
-        &lt;/script&gt;        
       </pre>
       <div class="note">
         Simplify the above example for better ergonomics. Is there a way to avoid
@@ -149,7 +148,6 @@ var respecConfig = {
         the <code>readyState</code> is set to <code>complete</code>
         (this needs to be specified)?
         <pre class="example highlight">
-        &lt;script&gt;
         runtime.onlaunch = function() {
           var options = { hidden: true };
           runtime.<a href="app-windowing.html#idl-def-ApplicationRuntime">createWindow</a>('main_ui.html', options).fulfill(function(win) {
@@ -157,9 +155,9 @@ var respecConfig = {
               win.show();
           );
         };
-        &lt;/script&gt;        
         </pre>
       </div>
+      -->
     </section>
     <section id="conformance">
       <p>
@@ -180,15 +178,12 @@ var respecConfig = {
         </p>
         <ul>
           <li>
-            <a href="app-windowing.html">Application Windowing</a>
+            <dfn>Service Worker</dfn> [<a href="https://github.com/slightlyoff/ServiceWorker"><dfn>SERVICE-WORKER</dfn></a>]
+          </li>
+          <li>
+            <dfn>Task Scheduler</dfn> [<a href="http://www.w3.org/2012/sysapps/web-alarms/"><dfn>TASK-SCHEDULER</dfn></a>]
           </li>
         </ul>
-        <div class="note">
-          The Application Windowing specification extends the
-          <code><a>ApplicationRuntime</a></code> interface,
-          but is currently split into its own specification
-          for convenience.
-        </div>
       </section>
     </section>
     <section>
@@ -199,22 +194,6 @@ var respecConfig = {
         The term <dfn>JavaScript global environment</dfn> refers to the global
         environment concept defined in [[!ECMA-262]].
       </p>
-      <p>
-        The terms <dfn>main environment</dfn> and <dfn>main document</dfn>
-        refer to the main entry point of the <a>application</a> to the system.
-      </p>
-      <p>
-        The term <dfn>application</dfn> in the context of this specification
-        refers to a
-        <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#terminology">document</a>
-        or <a>packaged application</a> that references a
-        <a>main document</a> in its manifest [SYSAPPS-MANIFEST].
-        This includes "mere web pages", as well as packaged and
-        hosted web applications, that meet the above requirement.
-      </p>
-      <div class="note">
-        The concept <dfn>packaged application</dfn> needs to be defined.
-      </div>
       <p>
         The <dfn><a href=
         "http://dev.w3.org/html5/spec/webappapis.html#event-handlers">EventHandler</a></dfn>
@@ -234,11 +213,14 @@ var respecConfig = {
         "http://dev.w3.org/html5/spec/webappapis.html#event-handler-event-type">
         event handler event types</a></dfn> are defined in [[!HTML5]].
       </p>
+      <!-- use a workaround for some refs while the specref is updated --> 
       <p>
-        The <dfn><a href="http://dev.w3.org/html5/workers/#the-workerglobalscope-common-interface">WorkerGlobalScope</a></dfn> common interface is defined in [[!WEBWORKERS]].
+        The <code><dfn>ServiceWorkerGlobalScope</dfn></code> interface is defined in
+        [<a>SERVICE-WORKER</a>]
       </p>
       <p>
-        The <dfn><a href="http://www.w3.org/html/wg/drafts/html/master/browsers.html#application-cache-api">ApplicationCache</a></dfn> interface is defined in [[!HTML5]].
+        The <code><dfn>TaskScheduler</dfn></code> interface is defined in
+        [<a>TASK-SCHEDULER</a>].
       </p>
     </section>
     <section class="informative">
@@ -246,56 +228,37 @@ var respecConfig = {
         Use Cases and Requirements
       </h2>
       <p>
-        Below is a list of use cases derived from initial input to the
+        Below is a list of use cases derived from the initial input to the
         <a href="http://www.w3.org/2012/09/sysapps-wg-charter.html">
         System Applications Working Group Charter</a> that are not addressed
         by the Runtime and Security Model for Web Applications
         [[SYSAPPS-RUNTIME]].
       </p>
+      <div class="note">
+        In the context of use cases, <dfn>main document</dfn> refers to a
+        JavaScript global environment similar to <a>service worker runtime
+        environment</a>.
+      </div>
       <section>
         <h2>
           A Single Entry Point to the Application
         </h2>
         <p>
-          The <a>main document</a> is used as the main entry point of the
-          <a>application</a> to the system. When loading the <a>main document</a>,
-          the runtime does not display it to the user. If the <a>application</a>
-          intends to show any user interface it has to create
-          windows or interact with the platform in other ways such as by
-          using a notification system.
+          The <a>main document</a> is the main entry point of the application
+          to the system. When loading the <a>main document</a>, the runtime
+          does not display it to the user. If the application intends to show a user
+          interface it has to create windows or interact with the platform
+          in other ways such as by using a notification system.
         </p>
         <p>
-          There is exactly one <a>main document</a> per <a>application</a> that can
-          be authored in pure JavaScript or, as usual, in HTML with JavaScript either
-          embedded inline or imported from an external file using the script
-          element. If pure JavaScript is used, an empty document is
-          created, including the associated scripts in their declared order.
-        </p>
-        <p>
-          In the following example, instead of loading an HTML page, an
-          implicit one is constructed which loads <code>polymer.min.js</code>
-          followed by loading <code>main.js</code>.
-        </p>  
-        <pre class="example highlight">
-          {
-           "main": { "scripts": ["polymer.min.js", "main.js"] }
-          }
-        </pre>
-        <p>
-          The runtime unloads the <a>main document</a> in certain circumstances,
-          which results in termination of the <a>application</a>. When the
+          The runtime can unload the <a>main document</a> in certain circumstances,
+          which results in termination of the application. When the
           <a>main document</a> is not executing any script, has no pending
           callbacks, and no open windows, the runtime can decide to unload the
           <a>main document</a>. In addition, the runtime unloads the <a>main
           document</a> in order to reduce resource consumption.
           For example, after loading the <a>main document</a> and no window is
-          visible, the <a>application</a> can be terminated by the runtime.
-        </p>
-        <p>
-          The runtime prevents an <a>application</a> from interfering
-          with the <a>application</a>'s termination, e.g. event listeners or long-running
-          scripts using APIs such as Geolocation, setTimeout, XMLHttpRequest will
-          not block the runtime from terminating the <a>application</a>.
+          visible, the application can be terminated by the runtime.
         </p>
       </section>
       <section>
@@ -307,75 +270,43 @@ var respecConfig = {
         </p>
         <p>
           The runtime does not create any visible windows by itself when
-          launching an <a>application</a>. This is up to the <a>application</a>
-          and is handled as part of the <code>launch</code> event.
-          When launched, the <a>application</a> will know the reason for the
+          launching an application. This is up to the application
+          and is handled as part of the <em>launch</em> event.
+          When launched, the application will know the reason for the
           launch. The reason could be a scheduled wake up, a persistent
           event of interest or a direct launch either by the system,
-          another <a>application</a>, or initiated by the user. This allows the
-          <a>application</a> to act differently depending on the reason.
+          another application, or initiated by the user. This allows the
+          application to act differently depending on the reason.
         </p>
         <section>
-          <h3>Persistent Event-initiated Launch</h3>
+          <h3>System Event-initiated Launch</h3>
           <p>
-            The runtime starts the <a>application</a> for the purpose of
+            The runtime starts the application for the purpose of
             delivering events from the system. For example, a system-level
             service might ask an email application to send an email on its
-            behalf. To handle these cases, the runtime launches the
-            <a>application</a> in the background. The <a>application</a> will listen
-            to persistent events in order to be launched in response to them. 
+            behalf. To handle these cases, the runtime will listen to
+            system events in order to launch the <a>main document</a> in
+            response to them.
           </p>
           <p>
-            An <a>application</a> subscribes to persistent events either at
+            An application subscribes to system events either at
             install time or at runtime. 
           </p>
-          <p>
-            The <a>application</a> does not appear in any system-wide task switcher.
-          </p>
-          <div class="note">
-            Is it be an implementation detail whether background
-            services are visible e.g. in a system monitor?
-          </div>
-          <div class="note">
-            Persistent event is a confusing name. We could say "incoming event",
-            "subscribed event", or "system event". The event is not persistent;
-            the subscription to the event is persistent. There should not be
-            any persistent/system event distinction, the events in that context
-            should all be like "system messages", they launch the main document.
-          </div>
         </section>
         <section>
           <h3>Wakeup-initiated Launch</h3>
           <p>
             This section is non-normative.
           </p>
-          <div class="note">
-            This section should be removed, as the use case is addressed by
-            the Task Scheduler specification.
-          </div>
           <p>
-            An <a>application</a> can schedule itself for wake-up by scheduling
-            a task according to the Application Task Scheduling
-            [SYSAPPS-TASK-SCHED]. On the contrary to setTimeout which will
-            not be called when the <a>application</a> has been terminated, the
-            tasks will ensure that the <a>application</a> is running and that
-            the launch event has been fired on the main document before
-            resolving the Promise associated with the task.
+            An application can schedule itself for wake-up by scheduling
+            a task. A task will ensure that the application is
+            running and that the launch event has been fired at the <a>main
+            document</a> before resolving the the task.
           </p>
           <p>
-            In the the following example, a "Still awake?..." message is
-            sent to the <a>application</a> in 10 minutes, and the <a>application</a>
-            woken up if it is not running.
-          </p>
-          <pre class="example highlight">
-            var when = new Date(Date.now() + 600000);
-            
-            runtime.taskScheduler.add(when, "respectTimezone", { message: "Still awake?..." })
-            .fulfill(function(task) { console.log(task.data.message); });
-          </pre>
-          <p>
-            Note that in order to run the tasks at the scheduled time,
-            the <a>application</a> can be started a bit earlier.
+            Note that in order to run a task at the scheduled time,
+            the application can be started a bit earlier.
           </p>
         </section>
       </section>
@@ -387,38 +318,44 @@ var respecConfig = {
           This section is non-normative.
         </p>
         <p>
-          The runtime terminates the <a>application</a> if it becomes idle
-          or in case or resource constraints.
+          The runtime terminates the application if it becomes idle
+          or in case of resource constraints.
         </p>
         <p>
-          Before actual termination, the <code>terminate</code> event 
-          is sent, giving the <a>application</a> the ability to clear up,
-          store state and close windows. In case that the <a>application</a> 
+          Before actual termination, the <em>terminate</em> event 
+          is sent, giving the application the ability to clear up,
+          store state and close windows. In case that the application 
           does not terminate within a given time, the runtime can
-          consider the <a>application</a> as too slow or hanging and has the
+          consider the application as too slow or hanging and has the
           ability to terminate it immediately (forced termination).
-          The <a>application</a> can save its state periodically to
+          The application can save its state periodically to
           protect against data loss, in such a case.
         </p>
         <p>
-          After the <code>terminate</code> event, or in case of forced
+          After the <em>terminate event</em>, or in case of forced
           termination, the runtime will progress to actual termination,
           which at least includes closing all remaining windows and
           unloading of the <a>main document</a>. What other resources the
           runtime unloads is up to the implementation.
         </p>
         <p>
-          There is an exception as the <a>application</a> can receive a wakeup
-          or a persistent event while processing the terminate event.
+          There is an exception as the application can receive a wakeup
+          or a system event while processing the terminate event.
           If this is the case, the terminate event is followed by a
-          <code>terminatecanceled</code> event, as actual termination
+          <em>terminate canceled</em> event, as actual termination
           will not happen.
         </p>
         <p>
           The runtime will avoid terminating an active, focused
-          <a>application</a> if at all possible. However, the runtime can
-          terminate the <a>application</a> as a last resort (e.g., due to
+          application if at all possible. However, the runtime can
+          terminate the application as a last resort (e.g., due to
           resource exhaustion or bad behavior).
+        </p>
+        <p>
+          The runtime prevents an application from interfering
+          with the application's termination, e.g. event listeners or long-running
+          scripts using APIs such as Geolocation, setTimeout, XMLHttpRequest will
+          not block the runtime from terminating the application.
         </p>
       </section>
       <section>
@@ -429,13 +366,14 @@ var respecConfig = {
         <p>
           The runtime context associated with the <a>main document</a> can
           be launched and terminated either by the user, another
-          <a>application</a>, or by the system. The system can decide to
-          terminate an <a>application</a> as long as it is considered
+          application, or by the system. The system can decide to
+          terminate an application as long as it is considered
           idle (no visible views or connected message ports).
-          In the case the <a>application</a> received an event (or something
-          similar, like a task was scheduled) while handling terminate,
-          the "terminate canceled" event will be fired successively and
-          the <a>main document</a> will stay active until considered idle again.
+          In the case the application received an event (or something
+          similar, like a task was scheduled) while processing the
+          <em>terminate</em> event, the <em>terminate canceled</em> event
+          will be fired successively and the <a>main document</a> will stay
+          active until considered idle again.
         </p>
         <div class="note">
           Mozilla would like the
@@ -444,124 +382,67 @@ var respecConfig = {
           in this spec].
         </div>
         <p>
-          When the <a>application</a> is launched, the launch event is fired
-          with a reason which can be of type "pending event",
-          "scheduled" or "other". If the
-          <a>application</a> was launched in order to handle an event it
+          When the application is launched, the launch event is fired
+          with a reason which can be of type <em>pending event</em>,
+          <em>scheduled</em> or <em>other</em>. If the
+          application was launched in order to handle an event it
           subscribed to or in response to a scheduled task, the type
-          will be "pending event" and "scheduled"
-          respectively. This allows for the <a>application</a> to avoid creating
+          will be <em>pending event</em> and <em>scheduled</em>
+          respectively. This allows for the application to avoid creating
           any user interface not resulting from the respective event
           handling.
         </p>
         <div class="note">
-          Explain how the "other" reason is handled
+          Explain how the <em>other</em> reason is handled
           by application developers.
         </div>
         <p>
-          In the case the user or another <a>application</a> started the 
-          <a>application</a>, the reason is set to <code>other</code>, allowing
+          In the case the user or another application started the 
+          application, the reason is set to <code>other</code>, allowing
           the main document to load the default user interface and
-          potentially a “screenshot” of the <a>application</a> while the
+          potentially a “screenshot” of the application while the
           main user interface is being built in the background.
         </p>
         <p>
-          For handling application lifecycle, the <a>application</a>'s
+          For handling application lifecycle, the application's
           <a>main document</a> can listen to the events.
         </p>
       </section>
       <section>
-        <h2>Persistent Events</h2>
+        <h2>System Events</h2>
         <p>
           This section is non-normative.
         </p>
         <p>
-          A typical browser-driven use case for persistent events is
+          A <dfn>system event</dfn> is an event sent by the system. This
+          event type does not originate from the DOM itself and thus lives
+          outside of the <a>main document</a>'s lifetime. A system
+          event can wake up a terminated application.
+          An implementation can also allow a system event to wake up
+          the system from sleeping.
+        </p>
+        <p>
+          A typical browser-driven use case for system events is
           an email application that wants to show a desktop notification
           when a push notification is received so the user is informed that
           there are new emails even though the tab in which the email
           application was running has been closed.
         </p>
         <p>
-          A <dfn>persistent event</dfn> is an event that persists over
-          the lifetime of an <a>application</a>. These events do not originate
-          from the DOM itself and thus live outside of the document
-          lifetime. As the <a>application</a> can be terminated, a new type of
-          event can wake up the <a>application</a> as a result.
+          System events are applicable to event types that fire
+          at low frequency and support filtering. For example, they are not
+          appropriate for user interaction events that require a visible user
+          interface or fire frequently.
         </p>
         <p>
-           An implementation can allow a <a>persistent event</a> to wake up
-          the system from sleeping.
-        </p>
-        <div class="note">
-          For example, in a Linux-kernel based
-          mobile device, need to acquire a CPU wake lock first before
-          firing events at the <a>main document</a>.
-        </div>
-        <div class="note">
-          An <a>application</a> will resubscribe to events when launched,
-          or alternatively, the data of the persistent event could be passed
-          in a <code><a>LaunchEvent</a></code> as extra argument(s) when
-          the <a>application is launched</a>? This needs to be clarified.
-        </div>
-        <p>
-          To prevent an <a>application</a> from being woken up for no reason,
-          filtering happens in the runtime and not in an <a>application</a>.
-        </p>
-        <p>
-          Persistent events are similar to regular events, but outlive
-          the lifetime of the document. Each event can have its own
-          filtering system defined, allowing the runtime to only wake
-          up an <a>application</a> for events it is interested in given
-          the filter rules defined.
-        </p>
-        <p>
-          Subscribing to the imaginable <code>onconnectionchanged</code>
-          persistent event, filtering to only get triggered when the
-          system device is being connected to AC power.
-        </p>
-        <pre class="example highlight">
-          power.onconnectionchanged.addPersistentEventListener({"connectionType": "ac-power"},
-            function() {
-               // Change battery icon.
-            }
-          );
-        </pre>
-        <p>
-          Persistent events are not meant for any event types depending
-          on document state given that the document might be unloaded
-          and it is also not meant for cross document communication,
-          for which Shared Workers can be used.
-        </p>
-        <p>
-          Not all events (defined in [[!HTML5]]) depend on document state
-          or interaction with the document. For example, the browser
-          orientation or device motion are defined in their own specifications.
-          The persistent events are not meant for this type of events
-          that either require a visible window or are intended to be fired 
-          frequently.
-        </p>
-        <p>
-          Instead, persistent events are applicable to event types that fire
-          at low frequency and support filtering.
-        </p>
-        <p>
-          When an <a>application</a> subscribes to an event, it will be subscribed
-          to it until the <a>application</a> unsubscribes, is uninstalled, updated
-          or relaunched. On relaunch or update it is thus the responsibility
-          of the <a>application</a> to re-subscribe to the event;
-          if not the context will not know what to call.
-        </p>
-        <p>
-          When an <a>application</a> is launched as a result of a persistent event,
-          firstly its <a>main document</a> is loaded, then the
-          launch event is dispatched, and immediately after
-          the launch event, the persistent event handler is
-          called. If the <a>application</a> did not register the listener as part
+          When an application is launched in response to a system event,
+          its <a>main document</a> is loaded, a launch event is dispatched,
+          and immediately after the launch event, the system event handler is
+          called. If the application did not register the listener as part
           of the launch event, nothing happens.
         </p>
         <div class="note">
-          To register for persistent events, need an event handler that is
+          To register for system events, need an event handler that is
           triggered when the application is first installed, the application
           is updated, or the runtime is updated to a new version
           ("oninstalled" or similar). Registration through the Manifest
@@ -580,17 +461,14 @@ var respecConfig = {
               code more declarative and efficient.
             </p>
             <p>
-              Subscribing to the imaginable <code>connectionchanged</code>
-              (refer to the previous example) persistent event, filtering to
-              only get triggered when the system device is being connected to
-              AC power.
-              <pre class="example highlight">
-                navigation.onconnectionchanged.addPersistentEventListener(
-                  { url: [{hostSuffix: 'example.com'}, {hostSuffix: 'example.org'}] },
-                  function(e) {
-                    // ...
-                  });
-              </pre>
+              To prevent an application from being woken up for no reason,
+              filtering happens in the runtime and not in an application.
+            </p>
+            <div class="note">
+              The difference between "persistent" and "regular" DOM events
+              must be made obvious so that developers do not expect regular DOM
+              events to behave similarly.
+            </div>
           </section>
           <section>
             <h3>Event Registration</h3>
@@ -598,8 +476,13 @@ var respecConfig = {
               This section is non-normative.
             </p>
             <p>
+              When an application subscribes to an event, it will be subscribed
+              to it until it is unsubscribed, the application is uninstalled,
+              updated or terminated.
+            </p>
+            <p>
               The listeners only exist in the context of the <a>main document</a>.
-              Event listeners for persistent events need to be registered each
+              Event listeners for system events need to be registered each
               time the <a>main document</a> is launched after termination.
             </p>
           </section>
@@ -614,82 +497,76 @@ var respecConfig = {
           These windows are directly scriptable by the main document.
         </p>
         <div class="note">
-          TODO: expand windowing use cases in a separate specification.
+          TODO: expand windowing use cases in a separate specification if needed.
         </div>
       </section>
       <section>
         <h2>
           Requirements
         </h2>
-        <div class="note">
-          Map these requirements to corresponding
-          <a href="https://github.com/sysapps/runtime/issues/">
-          issues in GitHub</a>.
-        </div>
         <p>
           Below is a summary of requirements derived from the above
           use cases:
         </p>
         <ol>
           <li>
-            An <a>application</a> (e.g. a background service) MUST be able
+            An application (e.g. a background service) MUST be able
             to run without visible user interface.
           </li>
           <li>
-            An <a>application</a> MUST be able to decide when to show the
+            An application MUST be able to decide when to show the
             user interface, if at all. It is up to the application developer
             to decide when it is appropriate to show the user interface.
             <ul>
               <li>
-                An <a>application</a> MUST be able to show the user interface
+                An application MUST be able to show the user interface
                 only after it is fully constructed with the right dimensions
                 and all the needed data has been loaded.
               </li>
             </ul>
           </li>
           <li>
-            The runtime model MUST support authoring an <a>application</a>
+            The runtime model MUST support authoring an application
             (or a service without user interface) that can be
             terminated without user’s consent, and that is able to
             restore to its previous state.
           </li>
           <li>
-            After being launched, an <a>application</a> MUST be able to
+            After being launched, an application MUST be able to
             execute scripts to recreate its state before recreating
             the actual user interface.
           </li>
           <li>
-            An <a>application</a> MUST be able to show a different user
+            An application MUST be able to show a different user
             interface given how the app was launched.
             <ul>
               <li>
                 For example, if launched as a photo picker, the
-                <a>application</a> will not show the default application
+                application will not show the default application
                 window, but instead creates a special purpose user interface.
               </li>
             </ul>
           </li>
           <li>
             The runtime MUST provide a mechanism to prevent an
-            <a>application</a> from being launched unnecessarily.
+            application from being launched unnecessarily.
             <ul>
               <li>
-                As the persistent events can result in launching dormant
+                As the system events can result in launching dormant
                 apps, it is important that that only happens for subscribed
                 events which support pre-filtering. For example, if an
-                <a>application</a> listens to a "USB plugged"
+                application listens to a "USB plugged"
                 event, it can additionally ask to only listen to a specific
                 device connected or a specific port.
               </li>
             </ul>
           </li>
           <li>
-            The runtime MUST provide a one entry point for window
-            creation to prevent race conditions (see
-            <a href="https://github.com/sysapps/runtime/issues/100">#100</a>).
+            The application MUST be able to enumerate windows
+            associated with it, and create new windows.
           </li>
           <li>
-            The <a>application</a> MUST be able to create a window and
+            The application MUST be able to create a window and
             have it laid out correctly with the right dimensions
             before being shown.
             <ul>
@@ -705,99 +582,37 @@ var respecConfig = {
       </section>
     </section>
     <section>
-      <h2>Main Document</h2>
+      <h2>APIs Available to Service Workers</h2>
       <p>
-        There MUST be no more than one <dfn>main document</dfn>
-        per <a>application</a>.
+        An environment through which the interfaces defined in this
+        specification are exposed to JavaScript is referred to as the
+        <dfn>service worker runtime environment</dfn> whose global object is
+        referred to as <dfn>service worker global scope</dfn>.
       </p>
-      <p>
-        A <a>main document</a> <dfn>type</dfn> is one of the following:
-      </p>
-      <ul>
-        <li>
-          "document"
-        </li>
-        <li>
-          "worker"
-        </li>
-      </ul>
-      <div class="issue">
-        Define <dfn>create a main document</dfn> and <dfn>discard a main document</dfn>
-        steps. The <a>main document</a> of <a>type</a> <em>type</em> is created
-        according to the definitions given in the <a>Packaged Applications</a>
-        specification (which itself needs to be specified).
-      </div>
-      <div class="issue">
-        Do we want to support authoring the main document of <a>type</a> "document"
-        in HTML with JavaScript? Potential use cases: re-use of existing
-        developer tools for authoring, easier debugging. Pure JavaScript would
-        be aligned with a main document of <a>type</a> "worker" and the way how
-        browser extensions are typically authored. Alternative: if the main
-        document is pure JavaScript it is hidden by default. But if it is
-        HTML it is visible by default to make the common use case of showing
-        HTML simple.
-      </div>
-      <div class="issue">
-        Can a <a>main document</a> of <a>type</a> "worker" transition to a
-        <a>main document</a> of <a>type</a> "document"
-        (<code>importScripts()</code> is the only API missing?).
-      </div>
-      <div class="issue">
-        Dereferencing and retrieval of files from within a package
-        of <a>type</a> "document" and "worker"? XHR only?
-      </div>
       <section>
-        <h3>APIs Available to the Main Document</h3>
-        <dl title='partial interface Window' class='idl'>
+        <h3>Extensions to the <code>ServiceWorkerScope</code> interface</h3>
+        <dl title='partial interface ServiceWorkerScope' class='idl'>
           <dt>
-            readonly attribute ApplicationRuntime runtime
+            readonly attribute ApplicationLifecycle application
+          </dt>
+          <dd>
+          </dd>
+          <dt>
+            readonly attribute TaskScheduler taskScheduler
           </dt>
           <dd>
           </dd>
         </dl>
         <p>
           The <code><a>ApplicationRuntime</a></code> instance must only
-          be exposed on the <code>Window</code> object if the
-          <a>JavaScript global environment</a> is a <a>main environment</a>
-          and the <a>main document</a> is of <a>type</a> "document".
-        </p>
-        <div class="issue">
-          Define disabled features and APIs, and APIs that can behave
-          differently if the main document is of type "document". For example,
-          synchronous blocking APIs such as alert() and prompt() are disallowed.
-          For the same reasons, window.open() can be problematic.
-        </div>
-        <dl title='interface MainWorkerGlobalScope : WorkerGlobalScope' class='idl'>
-          <dt>
-            readonly attribute ApplicationRuntime runtime
-          </dt>
-          <dd>
-          </dd>
-          <dt>
-            readonly attribute DOMString name
-          </dt>
-          <dd>
-          </dd>
-          <dt>
-            readonly attribute ApplicationCache applicationCache
-          </dt>
-          <dd>
-          </dd>
-          <dt>
-            attribute EventHandler onconnect
-          </dt>
-          <dd>
-          </dd>
-        </dl>
-        <p>
-          The <code><a>MainWorkerGlobalScope</a></code> interface must only
-          be exposed to JavaScript if the <a>JavaScript global environment</a>
-          is a <a>main environment</a> and the <a>main document</a> is of
-          <a>type</a> "worker".
+          be exposed on the <code>ServiceWorkerScope</code> object if the
+          <a>JavaScript global environment</a> is a <a>service worker
+          runtime environment</a>.
         </p>
         <div class="note">
-          This is a (non-exhaustive) list of APIs exposed to
-          <code>MainWorkerGlobalScope</code>:
+          This is a (non-exhaustive) list of features
+          <code>ServiceWorkerScope</code> inherits from
+          <code>SharedWorker</code>:
           <ul>
             <li>
               <code>navigator</code> object
@@ -807,6 +622,12 @@ var respecConfig = {
             </li>
             <li>
               <code>XMLHttpRequest()</code> method
+              <ul>
+                <li>
+                  If the JavaScript global environment is a worker environment,
+                  the responseType of document is not supported as per [[XHR]].
+                </li>
+              </ul>
             </li>
             <li>
               <code>setTimeout()/clearTimeout()</code> and
@@ -830,33 +651,13 @@ var respecConfig = {
           </ul>
         </div>
         <div class="note">
-          If the JavaScript global environment is a worker environment,
-          the <code>responseType</code> of <code>document</code> is not
-          supported as per [[XHR]].
-          <pre class="example">
-          xhr.responseType = "document"; // in worker environment, simply ignored
-          xhr.response; // response entity body is read as text response entity body
-          xhr.responseXML; // returns null
-          </pre>
-        </div>
-        <div class="issue">
-          What persistent storage APIs are available?
-          <code>document.cookie</code>, <code>localStorage</code>
-          are not available to workers, only <code>indexedDB</code>
-          is available.
-        </div>
-        <div class="issue">
-          What is communication channel between the <a>main document</a> and
-          created windows by <a>main document</a>? Is it possible to use
-          existing feature of the Web? Or does the specification need to define
-          a new way for this?
+          Communicating with the service worker is done with explicit
+          <code>MessagePort</code> objects similar to shared workers.
+          <a>ServiceWorkerScope</a> [<a>SERVICE-WORKER</a>] defines a
+          <code>windows()</code> method to enumerate all windows that
+          match the service worker's origin and scope.
         </div>
       </section>
-    </section>
-    <section>
-      <h2>
-        Application Lifecycle and Events Extensions
-      </h2>
       <div class="issue">
         Remove features that do not have strong use cases and
         consider them in v2. After implementation feedback, we can add
@@ -867,10 +668,10 @@ var respecConfig = {
       </div>
       <section>
         <h2>
-          <a>ApplicationRuntime</a> interface
+          The <a>ApplicationLifecycle</a> interface
         </h2>
         <section>
-          <dl title='interface ApplicationRuntime' class='idl'>
+          <dl title='interface ApplicationLifecycle' class='idl'>
             <dt>
               attribute EventHandler onlaunch
             </dt>
@@ -942,16 +743,6 @@ var respecConfig = {
               </tr>
             </tbody>
           </table>
-          <div class="issue">
-            Can we use the usual EventHandler paradigm also for <a>persistent
-            event</a>s instead of using a non-standard way to add an event
-            listener such as <code>.onfoo.addPersistentEventListener()</code>?
-            Proposal: if a <a>persistent event</a> is sent to the <code>runtime</code>
-            object, launch the <a>main document</a>. Open issues if using
-            EventHandler: how to support filtering; how to make
-            the "persistent" difference obvious so that developers do
-            not expect regular DOM Events to launch the main document.
-          </div>
           <div class="note">
             It would be nice to have a diagram that shows when all events are
             fired and the order. 
@@ -979,12 +770,10 @@ var respecConfig = {
           </p>
           <ol>
             <li>
-              <a>Create a main document</a>, if there is no
-              <a>main document</a>.
-            </li>
-            <li>
-              Spin the event loop until the <code>DOMContentLoaded</code>
-              event is fired.
+              Re-instantiate the pre-existing version of the <a>service worker runtime environment</a>,
+              if any. Otherwise, create a new <a>service worker runtime environment</a>
+              whose <a>JavaScript global environment</a> is a <a>service worker global scope</a>.
+              (TODO: fix this step)
             </li>
             <li>
               Create a <a>LaunchEvent</a> object and initialize it with the
@@ -1023,13 +812,12 @@ var respecConfig = {
                   <code>pending-event</code>
                 </td>
                 <td>
-                  The <a>application</a> is launched in response to a persistent event it is listening to.
+                  The application is launched in response to a system event it is listening to.
                 </td>
                 <td>
                   Zero or more.
                 </td>
                 <td>
-                  After <code>DOMContentLoaded</code> has been dispatched.
                 </td>
               </tr>
               <tr>
@@ -1037,13 +825,12 @@ var respecConfig = {
                   <code>scheduled</code>
                 </td>
                 <td>
-                  The <a>application</a> is launched by the system at the scheduled time.
+                  The application is launched by the system at the scheduled time.
                 </td>
                 <td>
                   Zero or more.
                 </td>
                 <td>
-                  TODO
                 </td>
               </tr>
               <tr>
@@ -1057,7 +844,6 @@ var respecConfig = {
                   Zero or more.
                 </td>
                 <td>
-                  After <code>DOMContentLoaded</code> has been dispatched.
                 </td>
               </tr>
             </tbody>
@@ -1067,8 +853,8 @@ var respecConfig = {
             This should be implied by the event "class" or the event name.
           </div>
           <div class="issue">
-            Need a mechanism for passing data to the <a>main document</a> from
-            the <a>application</a> that launched it. Does Web Activities/Intents
+            Need a mechanism for passing data to the service worker from
+            the application that launched it. Does Web Activities/Intents
             address the use case (in scope for
             <a href="http://www.w3.org/2009/dap/#webintents">Web Intents Task
             Force</a>), or is this addressed by e.g. passing the data in
@@ -1090,18 +876,18 @@ var respecConfig = {
             <li>
               Spin the event loop for a user-agent-defined amount of time
               <div class="note">
-                This is intended to allow the <a>application</a> to run scripts to
+                This is intended to allow the application to run scripts to
                 persist state, do clean up tasks before being terminated.
               </div>
             </li>
             <li>
-              Close all the windows created by the <a>main environment</a>.
+              Close all the windows created by the service worker script (TODO: see windows() in ServiceWorkerScope)
             </li>
             <li>
-              <a>Discard the main document</a>.
+              <a>Discard the service worker (TODO: see close() in WorkerGlobalScope)</a>.
           </ol>
           <div class="issue">
-            Need to make it clear that the <a>main document</a> can be
+            Need to make it clear that the service worker can be
             terminated only when it is idling, all Promises resolved, all
             indexedDB transactions completed, no Workers running etc. However,
             Badly behaving application that try to prevent an application for
@@ -1112,7 +898,7 @@ var respecConfig = {
 
         <section>
           <h3>Canceling the Termination</h3>
-          <dl title='[Constructor(DOMString type, optional TerminateCanceledEventInit eventInitDict)] interface TerminateCanceledEvent : Event' class='idl' data-merge="TerminateEventInit">
+          <dl title='[Constructor(DOMString type, optional TerminateCanceledEventInit eventInitDict)] interface TerminateCanceledEvent : Event' class='idl' data-merge="TerminateCanceledEventInit">
             <dt>
               readonly attribute DOMString reason
             </dt>
@@ -1134,10 +920,6 @@ var respecConfig = {
             <li>
               Cancel the already-running instance of the <a>terminate the application</a>
               algorithm, if any.
-            </li>
-            <li>
-              Spin the event loop until the <code>DOMContentLoaded</code>
-              event is fired.
             </li>
             <li>
               Create an event that uses the <code><a>TerminateCanceledEvent</a></code>
@@ -1208,6 +990,11 @@ var respecConfig = {
       <h2>
         Acknowledgments
       </h2>
+      <p>Thanks to everyone who have contributed to the
+        <a href="https://github.com/slightlyoff/ServiceWorker">
+        Service Worker</a> proposal that provides primitives
+        for this specification to build atop.
+      </p>
       <p>
         Some use cases are derived from Adam Barth’s execution model
         proposal referenced in the
