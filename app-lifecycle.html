@@ -594,7 +594,17 @@ var respecConfig = {
         <h3>Extensions to the <code>ServiceWorkerScope</code> interface</h3>
         <dl title='partial interface ServiceWorkerScope' class='idl'>
           <dt>
-            readonly attribute ApplicationLifecycle application
+            attribute EventHandler onlaunch
+          </dt>
+          <dd>
+          </dd>
+          <dt>
+            attribute EventHandler onterminate
+          </dt>
+          <dd>
+          </dd>
+          <dt>
+            attribute EventHandler onterminatecanceled
           </dt>
           <dd>
           </dd>
@@ -658,37 +668,14 @@ var respecConfig = {
           <code>windows()</code> method to enumerate all windows that
           match the service worker's origin and scope.
         </div>
-      </section>
-      <div class="issue">
-        Remove features that do not have strong use cases and
-        consider them in v2. After implementation feedback, we can add
-        features that appear to be lacking. For example,
-        <code>reason</code> in <code>LaunchEvent</code>,
-        <code>terminate</code> and <code>terminatecanceled</code>
-        are proposed to be deferred to v2 without strong use cases.
-      </div>
-      <section>
-        <h2>
-          The <a>ApplicationLifecycle</a> interface
-        </h2>
-        <section>
-          <dl title='interface ApplicationLifecycle' class='idl'>
-            <dt>
-              attribute EventHandler onlaunch
-            </dt>
-            <dd>
-            </dd>
-            <dt>
-              attribute EventHandler onterminate
-            </dt>
-            <dd>
-            </dd>
-            <dt>
-              attribute EventHandler onterminatecanceled
-            </dt>
-            <dd>
-            </dd>
-          </dl>
+        <div class="issue">
+          Remove features that do not have strong use cases and
+          consider them in v2. After implementation feedback, we can add
+          features that appear to be lacking. For example,
+          <code>reason</code> in <code>LaunchEvent</code>,
+          <code>terminate</code> and <code>terminatecanceled</code>
+          are proposed to be deferred to v2 without strong use cases.
+        </div>
           <p>
             When the <dfn>application is launched</dfn>, the user agent
             MUST queue a task to <a>launch the application</a>.
@@ -985,7 +972,8 @@ var respecConfig = {
             </tbody>
           </table>
         </section>
-      </section>
+
+
     </section>
     <section class="appendix">
       <h2>
