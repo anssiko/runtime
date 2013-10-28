@@ -42,7 +42,7 @@ var respecConfig = {
         wgURI:        "http://www.w3.org/2012/sysapps/",
         wgPublicList: "public-sysapps",
         wgPatentURI:  "http://www.w3.org/2004/01/pp-impl/58119/status",
-        subtitle:     "A Service Worker Extension Specification" 
+        subtitle:     "A Service Workers Extension Specification" 
       };
     </script>
     <style>
@@ -52,7 +52,7 @@ var respecConfig = {
   <body>
     <section id='abstract'>
       This specification extends <code><a>ServiceWorkerScope</a></code>
-      [<a>SERVICE-WORKER</a>] with APIs for managing the lifecycle of an
+      [<a>SERVICEWORKERS</a>] with APIs for managing the lifecycle of an
       application and associated events.
     </section>
     <section class="informative">
@@ -174,14 +174,15 @@ var respecConfig = {
       <section>
         <h3>Dependencies</h3>
         <p>
-          This specification relies on the following specification:
+          This specification relies on the following specifications:
         </p>
         <ul>
           <li>
-            <dfn>Service Worker</dfn> [<a href="https://github.com/slightlyoff/ServiceWorker"><dfn>SERVICE-WORKER</dfn></a>]
+            <dfn>Service Workers</dfn> [<a href="http://htmlpreview.github.io/?https://raw.github.com/slightlyoff/ServiceWorker/master/spec/service_worker/index.html"><dfn>SERVICEWORKERS</dfn></a>]
+            (see also the <a href="https://github.com/slightlyoff/ServiceWorker">ServiceWorker GH repo</a>)
           </li>
           <li>
-            <dfn>Task Scheduler</dfn> [<a href="http://www.w3.org/2012/sysapps/web-alarms/"><dfn>TASK-SCHEDULER</dfn></a>]
+            <dfn>Task Scheduler</dfn> [<a href="http://www.w3.org/2012/sysapps/web-alarms/"><dfn>TASKSCHEDULER</dfn></a>]
           </li>
         </ul>
       </section>
@@ -216,11 +217,11 @@ var respecConfig = {
       <!-- use a workaround for some refs while the specref is updated --> 
       <p>
         The <code><dfn>ServiceWorkerGlobalScope</dfn></code> interface is defined in
-        [<a>SERVICE-WORKER</a>]
+        [<a>SERVICEWORKERS</a>]
       </p>
       <p>
         The <code><dfn>TaskScheduler</dfn></code> interface is defined in
-        [<a>TASK-SCHEDULER</a>].
+        [<a>TASKSCHEDULER</a>].
       </p>
     </section>
     <section class="informative">
@@ -653,7 +654,7 @@ var respecConfig = {
         <div class="note">
           Communicating with the service worker is done with explicit
           <code>MessagePort</code> objects similar to shared workers.
-          <a>ServiceWorkerScope</a> [<a>SERVICE-WORKER</a>] defines a
+          <a>ServiceWorkerScope</a> [<a>SERVICEWORKERS</a>] defines a
           <code>windows()</code> method to enumerate all windows that
           match the service worker's origin and scope.
         </div>
