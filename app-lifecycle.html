@@ -676,304 +676,302 @@ var respecConfig = {
           <code>terminate</code> and <code>terminatecanceled</code>
           are proposed to be deferred to v2 without strong use cases.
         </div>
-          <p>
-            When the <dfn>application is launched</dfn>, the user agent
-            MUST queue a task to <a>launch the application</a>.
-          </p>
-          <p>
-            When the <dfn>application is terminated</dfn>, the user agent
-            MUST queue a task to <a>terminate the application</a>.
-          </p>
-          <p>
-            When the <dfn>application termination is canceled</dfn>, the
-            user agent MUST queue a task to <a>cancel the termination</a>.
-          </p>
-          <p>
-            The following are the event handlers (and their corresponding
-            event handler event types) that MUST be supported, as event
-            handler IDL attributes, by all objects implementing the
-            <code><a>ApplicationRuntime</a></code> interface:
-          <table class="simple">
-            <thead>
-              <tr>
-                <th>
-                  event handler
-                </th>
-                <th>
-                  event handler event type
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <strong><code>onlaunch</code></strong>
-                </td>
-                <td>
-                  <code>launch</code>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <strong><code>onterminate</code></strong>
-                </td>
-                <td>
-                  <code>terminate</code>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <strong><code>onterminatecanceled</code></strong>
-                </td>
-                <td>
-                  <code>terminatecanceled</code>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="note">
-            It would be nice to have a diagram that shows when all events are
-            fired and the order. 
-          </div>
-        </section>
-        <section>
-          <h3>Launching the Application</h3>
-          <dl title='[Constructor(DOMString type, optional LaunchEventInit eventInitDict)] interface LaunchEvent : Event' class='idl' data-merge="LaunchEventInit">
-            <dt>
-              readonly attribute DOMString reason
-            </dt>
-            <dd>
-            </dd>
-          </dl>
-          <dl title="dictionary LaunchEventInit : EventInit" class='idl'>
-            <dt>
-              attribute DOMString reason
-            </dt>
-            <dd>
-            </dd>
-          </dl>
-          <p>
-            When the user agent is REQUIRED to <dfn>launch the application</dfn>,
-            the user agent MUST run the following steps:
-          </p>
-          <ol>
-            <li>
-              Re-instantiate the pre-existing version of the <a>service worker runtime environment</a>,
-              if any. Otherwise, create a new <a>service worker runtime environment</a>
-              whose <a>JavaScript global environment</a> is a <a>service worker global scope</a>.
-              (TODO: fix this step)
-            </li>
-            <li>
-              Create a <a>LaunchEvent</a> object and initialize it with the
-              given name <code>launch</code>.
-            </li>
-            <li>
-              Initialize the <code>reason</code> attribute to a value
-              corresponding to a launch <a>reason</a> as defined in the
-              table below.
-            </li>
-            <li>
-              Dispatch the newly created <code><a>LaunchEvent</a></code>
-              object at the <code><a>ApplicationRuntime</a></code> object.
-            </li>
-          </ol>
-          <table class="simple">
-            <thead>
-              <tr>
-                <th>
-                  <code>reason</code> attribute value
-                </th>
-                <th>
-                  Description
-                </th>
-                <th>
-                  Times [fired]
-                </th>
-                <th>
-                  When
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <code>pending-event</code>
-                </td>
-                <td>
-                  The application is launched in response to a system event it is listening to.
-                </td>
-                <td>
-                  Zero or more.
-                </td>
-                <td>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <code>scheduled</code>
-                </td>
-                <td>
-                  The application is launched by the system at the scheduled time.
-                </td>
-                <td>
-                  Zero or more.
-                </td>
-                <td>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <code>other</code>
-                </td>
-                <td>
-                  Other reason.
-                </td>
-                <td>
-                  Zero or more.
-                </td>
-                <td>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="issue">
-            The pending-event, scheduled or other event types are confusing.
-            This should be implied by the event "class" or the event name.
-          </div>
-          <div class="issue">
-            Need a mechanism for passing data to the service worker from
-            the application that launched it. Does Web Activities/Intents
-            address the use case (in scope for
-            <a href="http://www.w3.org/2009/dap/#webintents">Web Intents Task
-            Force</a>), or is this addressed by e.g. passing the data in
-            <code>LaunchEvent</code>?
-          </div>
-        </section>
+        <p>
+          When the <dfn>application is launched</dfn>, the user agent
+          MUST queue a task to <a>launch the application</a>.
+        </p>
+        <p>
+          When the <dfn>application is terminated</dfn>, the user agent
+          MUST queue a task to <a>terminate the application</a>.
+        </p>
+        <p>
+          When the <dfn>application termination is canceled</dfn>, the
+          user agent MUST queue a task to <a>cancel the termination</a>.
+        </p>
+        <p>
+          The following are the event handlers (and their corresponding
+          event handler event types) that MUST be supported, as event
+          handler IDL attributes, by all objects implementing the
+          <code><a>ApplicationRuntime</a></code> interface:
+        <table class="simple">
+          <thead>
+            <tr>
+              <th>
+                event handler
+              </th>
+              <th>
+                event handler event type
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <strong><code>onlaunch</code></strong>
+              </td>
+              <td>
+                <code>launch</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong><code>onterminate</code></strong>
+              </td>
+              <td>
+                <code>terminate</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong><code>onterminatecanceled</code></strong>
+              </td>
+              <td>
+                <code>terminatecanceled</code>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="note">
+          It would be nice to have a diagram that shows when all events are
+          fired and the order. 
+        </div>
+      </section>
+      <section>
+        <h3>Launching the Application</h3>
+        <dl title='[Constructor(DOMString type, optional LaunchEventInit eventInitDict)] interface LaunchEvent : Event' class='idl' data-merge="LaunchEventInit">
+          <dt>
+            readonly attribute DOMString reason
+          </dt>
+          <dd>
+          </dd>
+        </dl>
+        <dl title="dictionary LaunchEventInit : EventInit" class='idl'>
+          <dt>
+            attribute DOMString reason
+          </dt>
+          <dd>
+          </dd>
+        </dl>
+        <p>
+          When the user agent is REQUIRED to <dfn>launch the application</dfn>,
+          the user agent MUST run the following steps:
+        </p>
+        <ol>
+          <li>
+            Re-instantiate the pre-existing version of the <a>service worker runtime environment</a>,
+            if any. Otherwise, create a new <a>service worker runtime environment</a>
+            whose <a>JavaScript global environment</a> is a <a>service worker global scope</a>.
+            (TODO: fix this step)
+          </li>
+          <li>
+            Create a <a>LaunchEvent</a> object and initialize it with the
+            given name <code>launch</code>.
+          </li>
+          <li>
+            Initialize the <code>reason</code> attribute to a value
+            corresponding to a launch <a>reason</a> as defined in the
+            table below.
+          </li>
+          <li>
+            Dispatch the newly created <code><a>LaunchEvent</a></code>
+            object at the <code><a>ApplicationRuntime</a></code> object.
+          </li>
+        </ol>
+        <table class="simple">
+          <thead>
+            <tr>
+              <th>
+                <code>reason</code> attribute value
+              </th>
+              <th>
+                Description
+              </th>
+              <th>
+                Times [fired]
+              </th>
+              <th>
+                When
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>pending-event</code>
+              </td>
+              <td>
+                The application is launched in response to a system event it is listening to.
+              </td>
+              <td>
+                Zero or more.
+              </td>
+              <td>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>scheduled</code>
+              </td>
+              <td>
+                The application is launched by the system at the scheduled time.
+              </td>
+              <td>
+                Zero or more.
+              </td>
+              <td>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>other</code>
+              </td>
+              <td>
+                Other reason.
+              </td>
+              <td>
+                Zero or more.
+              </td>
+              <td>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="issue">
+          The pending-event, scheduled or other event types are confusing.
+          This should be implied by the event "class" or the event name.
+        </div>
+        <div class="issue">
+          Need a mechanism for passing data to the service worker from
+          the application that launched it. Does Web Activities/Intents
+          address the use case (in scope for
+          <a href="http://www.w3.org/2009/dap/#webintents">Web Intents Task
+          Force</a>), or is this addressed by e.g. passing the data in
+          <code>LaunchEvent</code>?
+        </div>
+      </section>
 
-        <section>
-          <h3>Terminating the Application</h3>
-          <p>
-            When the user agent is REQUIRED to <dfn>terminate the application</dfn>,
-            it MUST run the following steps:
-          </p>
-          <ol>
-            <li>
-              Fire a simple event named terminate at the
-              <code><a>ApplicationRuntime</a></code> object.
-            </li>
-            <li>
-              Spin the event loop for a user-agent-defined amount of time
-              <div class="note">
-                This is intended to allow the application to run scripts to
-                persist state, do clean up tasks before being terminated.
-              </div>
-            </li>
-            <li>
-              Close all the windows created by the service worker script (TODO: see windows() in ServiceWorkerScope)
-            </li>
-            <li>
-              <a>Discard the service worker (TODO: see close() in WorkerGlobalScope)</a>.
-          </ol>
-          <div class="issue">
-            Need to make it clear that the service worker can be
-            terminated only when it is idling, all Promises resolved, all
-            indexedDB transactions completed, no Workers running etc. However,
-            Badly behaving application that try to prevent an application for
-            being closed can be killed by the system similarly to
-            <code>onunload</code>.
-          </div>
-        </section>
+      <section>
+        <h3>Terminating the Application</h3>
+        <p>
+          When the user agent is REQUIRED to <dfn>terminate the application</dfn>,
+          it MUST run the following steps:
+        </p>
+        <ol>
+          <li>
+            Fire a simple event named terminate at the
+            <code><a>ApplicationRuntime</a></code> object.
+          </li>
+          <li>
+            Spin the event loop for a user-agent-defined amount of time
+            <div class="note">
+              This is intended to allow the application to run scripts to
+              persist state, do clean up tasks before being terminated.
+            </div>
+          </li>
+          <li>
+            Close all the windows created by the service worker script (TODO: see windows() in ServiceWorkerScope)
+          </li>
+          <li>
+            <a>Discard the service worker (TODO: see close() in WorkerGlobalScope)</a>.
+        </ol>
+        <div class="issue">
+          Need to make it clear that the service worker can be
+          terminated only when it is idling, all Promises resolved, all
+          indexedDB transactions completed, no Workers running etc. However,
+          Badly behaving application that try to prevent an application for
+          being closed can be killed by the system similarly to
+          <code>onunload</code>.
+        </div>
+      </section>
 
-        <section>
-          <h3>Canceling the Termination</h3>
-          <dl title='[Constructor(DOMString type, optional TerminateCanceledEventInit eventInitDict)] interface TerminateCanceledEvent : Event' class='idl' data-merge="TerminateCanceledEventInit">
-            <dt>
-              readonly attribute DOMString reason
-            </dt>
-            <dd>
-            </dd>
-          </dl>
-          <dl title="dictionary TerminateCanceledEventInit : EventInit" class='idl'>
-            <dt>
-              attribute DOMString reason
-            </dt>
-            <dd>
-            </dd>
-          </dl>
-          <p>
-            When the user agent is REQUIRED to <dfn>cancel the termination</dfn>,
-            the user agent MUST run the following steps:
-          </p>
-          <ol>
-            <li>
-              Cancel the already-running instance of the <a>terminate the application</a>
-              algorithm, if any.
-            </li>
-            <li>
-              Create an event that uses the <code><a>TerminateCanceledEvent</a></code>
-              interface, with the name <code>terminatecanceled</code>.
-            </li>
-            <li>
-              Initialize the <code>reason</code> attribute to a value
-              corresponding to a terminate cancellation <a>reason</a> as defined in the
-              table below.
-            </li>
-            <li>
-              Dispatch the newly created <code><a>TerminationCanceledEvent</a></code>
-              object at the <code><a>ApplicationRuntime</a></code> object.
-            </li>
-          </ol>
-          <table class="simple">
-            <thead>
-              <tr>
-                <th>
-                  <code>reason</code> attribute value
-                </th>
-                <th>
-                  Description
-                </th>
-                <th>
-                  Times [fired]
-                </th>
-                <th>
-                  When
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  -
-                </td>
-                <td>
-                  -
-                </td>
-                <td>
-                  -
-                </td>
-                <td>
-                  -
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  -
-                </td>
-                <td>
-                  -
-                </td>
-                <td>
-                  -
-                </td>
-                <td>
-                  -
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-
-
+      <section>
+        <h3>Canceling the Termination</h3>
+        <dl title='[Constructor(DOMString type, optional TerminateCanceledEventInit eventInitDict)] interface TerminateCanceledEvent : Event' class='idl' data-merge="TerminateCanceledEventInit">
+          <dt>
+            readonly attribute DOMString reason
+          </dt>
+          <dd>
+          </dd>
+        </dl>
+        <dl title="dictionary TerminateCanceledEventInit : EventInit" class='idl'>
+          <dt>
+            attribute DOMString reason
+          </dt>
+          <dd>
+          </dd>
+        </dl>
+        <p>
+          When the user agent is REQUIRED to <dfn>cancel the termination</dfn>,
+          the user agent MUST run the following steps:
+        </p>
+        <ol>
+          <li>
+            Cancel the already-running instance of the <a>terminate the application</a>
+            algorithm, if any.
+          </li>
+          <li>
+            Create an event that uses the <code><a>TerminateCanceledEvent</a></code>
+            interface, with the name <code>terminatecanceled</code>.
+          </li>
+          <li>
+            Initialize the <code>reason</code> attribute to a value
+            corresponding to a terminate cancellation <a>reason</a> as defined in the
+            table below.
+          </li>
+          <li>
+            Dispatch the newly created <code><a>TerminationCanceledEvent</a></code>
+            object at the <code><a>ApplicationRuntime</a></code> object.
+          </li>
+        </ol>
+        <table class="simple">
+          <thead>
+            <tr>
+              <th>
+                <code>reason</code> attribute value
+              </th>
+              <th>
+                Description
+              </th>
+              <th>
+                Times [fired]
+              </th>
+              <th>
+                When
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
     </section>
     <section class="appendix">
       <h2>
